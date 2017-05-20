@@ -1,0 +1,91 @@
+{
+    "records": [{
+            "TBNAME": "empdata",
+            "NAME": "AREA"
+        },
+        {
+            "TBNAME": "empdata",
+            "NAME": "DEPT"
+        },
+        {
+            "TBNAME": "empdata",
+            "NAME": "DIV"
+        },
+        {
+            "TBNAME": "empdata",
+            "NAME": "FIRSTNAME"
+        },
+        {
+            "TBNAME": "empdata",
+            "NAME": "HIREDATE"
+        },
+        {
+            "TBNAME": "empdata",
+            "NAME": "JOBCLASS"
+        },
+        {
+            "TBNAME": "empdata",
+            "NAME": "LASTNAME"
+        },
+        {
+            "TBNAME": "empdata",
+            "NAME": "MIDINITIAL"
+        },
+        {
+            "TBNAME": "empdata",
+            "NAME": "PIN"
+        },
+        {
+            "TBNAME": "empdata",
+            "NAME": "SALARY"
+        },
+        {
+            "TBNAME": "empdata",
+            "NAME": "TITLE"
+        },
+        {
+            "TBNAME": "employee",
+            "NAME": "CURR_JOBCODE"
+        },
+        {
+            "TBNAME": "employee",
+            "NAME": "CURR_SAL"
+        },
+        {
+            "TBNAME": "employee",
+            "NAME": "DEPARTMENT"
+        },
+        {
+            "TBNAME": "employee",
+            "NAME": "ED_HRS"
+        },
+        {
+            "TBNAME": "employee",
+            "NAME": "EMP_ID"
+        },
+        {
+            "TBNAME": "employee",
+            "NAME": "FIRST_NAME"
+        },
+        {
+            "TBNAME": "employee",
+            "NAME": "HIRE_DATE"
+        },
+        {
+            "TBNAME": "employee",
+            "NAME": "LAST_NAME"
+        },
+        {
+            "TBNAME": "systemkeywords",
+            "NAME": "DBKEYWORD"
+        },
+        {
+            "TBNAME": "systemkeywords",
+            "NAME": "ID"
+        },
+        {
+            "TBNAME": "systemkeywords",
+            "NAME": "KEYWORD"
+        }
+    ]
+}

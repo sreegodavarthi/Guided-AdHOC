@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
+    <script src="materialize-tags.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <!--<link rel="stylesheet" href="materialize-tags.min.css">-->
+    <div id="typeahead" class="col-md-8">
+        <input class="typeahead form-control" id="txtarea" type="text" placeholder="Select the user" />
+    </div>
+    <script>
+        $.ajax({
+                dataType: "json",
+                url: "./data.json"
+            })
+            .done(function(data) {
+                var data = data.records;
+                var engine = new Bloodhound({
+                    datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
+                    queryTokenizer: Bloodhound.tokenizers.whitespace,
+                    local: $.map(data, function(val, key) {
+                        // return `suggestion` object for `templates` `suggestion`         
+                        return {
+                            value: val.NAME,
+                            suggestion: val
+                        }
+                    })
+                });
+
+                engine.initialize();
+
+
+                $("#typeahead .typeahead")
+                    .typeahead({
+                        hint: true,
+                        highlight: true,
+                        minLength: 1,
+                        limit: 6
+                    }, {
+                        name: "engine",
+                        displayKey: "NAME",
+                        templates: {
+                            empty: [
+                                '<div class="empty-message">',
+                                'Unable to find any match for the current query',
+                                '</div>'
+                            ].join('\n'),
+                            suggestion: function(data) {
+                                // `suggestion` object passed at `engine`
+                                console.log(data.suggestion);
+                                // return suggestion element to display
+                                var _suggestion = "<div>" +
+                                    data.suggestion.NAME +
+                                    " in " +
+                                    data.suggestion.TBNAME + "</div>";
+                                return _suggestion
+                            }
+                        },
+                        source: engine.ttAdapter()
+                    });
+
+                $("#typeahead .typeahead")
+                    .typeahead({
+                        hint: true,
+                        highlight: true,
+                        minLength: 1,
+                        limit: 6
+                    }, {
+                        name: "engine",
+                        displayKey: "NAME",
+                        templates: {
+                            empty: [
+                                '<div class="empty-message">',
+                                'Unable to find any match for the current query',
+                                '</div>'
+                            ].join('\n'),
+                            suggestion: function(data) {
+                                // `suggestion` object passed at `engine`
+                                console.log(data.suggestion);
+                                // return suggestion element to display
+                                var _suggestion = "<div>" +
+                                    data.suggestion.NAME +
+                                    " in " +
+                                    data.suggestion.TBNAME + "</div>";
+                                return _suggestion
+                            }
+                        },
+                        source: engine.ttAdapter()
+                    });
+                // $("#typeahead .typeahead").materialtags({
+                //     typeaheadjs: [{
+                //         highlight: true,
+                //     }, {
+                //         name: 'engine',
+                //         displayKey: 'NAME',
+                //         valueKey: 'NAME',
+                //         source: engine.ttAdapter()
+                //     }]
+                // });
+
+
+                // $('input').materialtags({
+                //     typeaheadjs: [{
+                //         highlight: true,
+                //     }, {
+                //         name: 'engine',
+                //         displayKey: 'NAME',
+                //         // valueKey: 'NAME',
+                //         source: engine.ttAdapter()
+                //     }]
+                // });
+            })
+    </script>
+</body>
+
+</html>
