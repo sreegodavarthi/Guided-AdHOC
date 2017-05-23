@@ -5,7 +5,7 @@
         },
         {
             "TBNAME": "empdata",
-            "NAME": "DEPT"
+            "NAME": "DEPARTMENT"
         },
         {
             "TBNAME": "empdata",
@@ -13,11 +13,11 @@
         },
         {
             "TBNAME": "empdata",
-            "NAME": "FIRSTNAME"
+            "NAME": "FIRST_NAME"
         },
         {
             "TBNAME": "empdata",
-            "NAME": "HIREDATE"
+            "NAME": "HIRE_DATE"
         },
         {
             "TBNAME": "empdata",
@@ -25,7 +25,7 @@
         },
         {
             "TBNAME": "empdata",
-            "NAME": "LASTNAME"
+            "NAME": "LAST_NAME"
         },
         {
             "TBNAME": "empdata",
@@ -74,18 +74,6 @@
         {
             "TBNAME": "employee",
             "NAME": "LAST_NAME"
-        },
-        {
-            "TBNAME": "systemkeywords",
-            "NAME": "DBKEYWORD"
-        },
-        {
-            "TBNAME": "systemkeywords",
-            "NAME": "ID"
-        },
-        {
-            "TBNAME": "systemkeywords",
-            "NAME": "KEYWORD"
         }
     ]
 }
