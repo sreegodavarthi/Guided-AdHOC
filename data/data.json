@@ -1,79 +1,179 @@
 {
     "records": [{
-            "TBNAME": "empdata",
-            "NAME": "AREA"
+            "TBNAME": [
+                "empdata",
+                "empdata"
+            ],
+            "NAME": "AREA",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "empdata",
-            "NAME": "DEPARTMENT"
+            "TBNAME": [
+                "empdata",
+                "empdata"
+            ],
+            "NAME": "DEPARTMENT",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "empdata",
-            "NAME": "DIV"
+            "TBNAME": [
+                "empdata",
+                "empdata"
+            ],
+            "NAME": "DIV",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "empdata",
-            "NAME": "FIRST_NAME"
+            "TBNAME": [
+                "empdata",
+                "empdata"
+            ],
+            "NAME": "FIRST_NAME",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "empdata",
-            "NAME": "HIRE_DATE"
+            "TBNAME": [
+                "empdata",
+                "empdata"
+            ],
+            "NAME": "HIRE_DATE",
+            "COLTYPE": "DATE"
         },
         {
-            "TBNAME": "empdata",
-            "NAME": "JOBCLASS"
+            "TBNAME": [
+                "empdata",
+                "empdata"
+            ],
+            "NAME": "JOBCLASS",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "empdata",
-            "NAME": "LAST_NAME"
+            "TBNAME": [
+                "empdata",
+                "empdata"
+            ],
+            "NAME": "LAST_NAME",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "empdata",
-            "NAME": "MIDINITIAL"
+            "TBNAME": [
+                "empdata",
+                "empdata"
+            ],
+            "NAME": "MIDINITIAL",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "empdata",
-            "NAME": "PIN"
+            "TBNAME": [
+                "empdata",
+                "empdata"
+            ],
+            "NAME": "PIN",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "empdata",
-            "NAME": "SALARY"
+            "TBNAME": [
+                "empdata",
+                "empdata"
+            ],
+            "NAME": "SALARY",
+            "COLTYPE": "DOUBLE"
         },
         {
-            "TBNAME": "empdata",
-            "NAME": "TITLE"
+            "TBNAME": [
+                "empdata",
+                "empdata"
+            ],
+            "NAME": "TITLE",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "employee",
-            "NAME": "CURR_JOBCODE"
+            "TBNAME": [
+                "employee",
+                "employee"
+            ],
+            "NAME": "CURR_JOBCODE",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "employee",
-            "NAME": "CURR_SAL"
+            "TBNAME": [
+                "employee",
+                "employee"
+            ],
+            "NAME": "CURR_SAL",
+            "COLTYPE": "DOUBLE"
         },
         {
-            "TBNAME": "employee",
-            "NAME": "DEPARTMENT"
+            "TBNAME": [
+                "employee",
+                "employee"
+            ],
+            "NAME": "DEPARTMENT",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "employee",
-            "NAME": "ED_HRS"
+            "TBNAME": [
+                "employee",
+                "employee"
+            ],
+            "NAME": "ED_HRS",
+            "COLTYPE": "FLOAT"
         },
         {
-            "TBNAME": "employee",
-            "NAME": "EMP_ID"
+            "TBNAME": [
+                "employee",
+                "employee"
+            ],
+            "NAME": "EMP_ID",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "employee",
-            "NAME": "FIRST_NAME"
+            "TBNAME": [
+                "employee",
+                "employee"
+            ],
+            "NAME": "FIRST_NAME",
+            "COLTYPE": "CHAR"
         },
         {
-            "TBNAME": "employee",
-            "NAME": "HIRE_DATE"
+            "TBNAME": [
+                "employee",
+                "employee"
+            ],
+            "NAME": "HIRE_DATE",
+            "COLTYPE": "DATE"
         },
         {
-            "TBNAME": "employee",
-            "NAME": "LAST_NAME"
+            "TBNAME": [
+                "employee",
+                "employee"
+            ],
+            "NAME": "LAST_NAME",
+            "COLTYPE": "CHAR"
+        },
+        {
+            "TBNAME": [
+                "systemkeywords",
+                "systemkeywords"
+            ],
+            "NAME": "DBKEYWORD",
+            "COLTYPE": "VARCHAR"
+        },
+        {
+            "TBNAME": [
+                "systemkeywords",
+                "systemkeywords"
+            ],
+            "NAME": "ID",
+            "COLTYPE": "INTEGER"
+        },
+        {
+            "TBNAME": [
+                "systemkeywords",
+                "systemkeywords"
+            ],
+            "NAME": "KEYWORD",
+            "COLTYPE": "VARCHAR"
         }
     ]
 }
