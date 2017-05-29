@@ -10,30 +10,40 @@ var _itemArr = [];
 var keywordArr = [];
 var array = [];
 var isKeywordEntered = false;
+var isKeywordRemoved = false;
 
 
 $(function() {
+
+
+
+
+
 
     var items = [];
     var keywords = [];
     var parse;
     $.when(
-        // $.get('/ibi_apps/run.bip?BIP_REQUEST_TYPE=BIP_RUN&BIP_folder=IBFS%253A%252FEDA%252FEDASERVE%252Ftypeahead&BIP_item=procedure_typeahead.fex&windowHandle=436960&IBI_random=4516.2870024981075', function(data) {
-        //     parse = JSON.parse(data);
-        //     items = parse.records;
-        // }),
-        // $.get('/ibi_apps/run.bip?BIP_REQUEST_TYPE=BIP_RUN&BIP_folder=IBFS%253A%252FEDA%252FEDASERVE%252Ftypeahead&BIP_item=procedure2.fex&windowHandle=271353&IBI_random=2165.7337772878413', function(data) {
-        //     parse = JSON.parse(data);
-        //     keywords = parse.records;
-        // })
-
-        $.get('data/data.json', function(data) {
-            items = data.records;
+        $.get('/ibi_apps/run.bip?BIP_REQUEST_TYPE=BIP_RUN&BIP_folder=IBFS%253A%252FEDA%252FEDASERVE%252Ftypeahead&BIP_item=procedure_typeahead.fex&windowHandle=436960&IBI_random=4516.2870024981075', function(data) {
+            parse = JSON.parse(data);
+            items = parse.records;
         }),
-
-        $.get('data/data1.json', function(data) {
-            keywords = data.records;
+        $.get('/ibi_apps/run.bip?BIP_REQUEST_TYPE=BIP_RUN&BIP_folder=IBFS%253A%252FEDA%252FEDASERVE%252Ftypeahead&BIP_item=procedure2.fex&windowHandle=271353&IBI_random=2165.7337772878413', function(data) {
+            parse = JSON.parse(data);
+            keywords = parse.records;
         })
+        //get json from first record
+        /* $.get('data/data.json', function (data) {
+             //store records in items array
+             items = data.records;
+         }),
+ 
+ 
+         //get json from second record
+         $.get('data/data1.json', function (data) {
+             //store records in keywords array
+             keywords = data.records;
+         }) */
     ).then(function() {
 
 
@@ -41,6 +51,9 @@ $(function() {
         result = items.concat(keywords);
         var newData = renameNameToValue(result);
         configureItems(newData);
+
+
+
     });
 
 
@@ -138,10 +151,10 @@ $(function() {
         /*  elt.materialtags({
               itemValue: 'value',
               itemText: function(item) {
-
-
-
-
+ 
+ 
+ 
+ 
                   if (item) {
                       if (item.NAME) {
                           return item.NAME;
@@ -150,10 +163,10 @@ $(function() {
                       }
                   }
               },
-
-
-
-
+ 
+ 
+ 
+ 
               tagClass: function(item) {
                   if (item.KEYWORD) {
                       return 'chip chip_green';
@@ -167,10 +180,10 @@ $(function() {
               },
               typeaheadjs: {
                   name: 'config',
-
-
-
-
+ 
+ 
+ 
+ 
                   displayKey: function(item) {
                       if (item) {
                           if (item.NAME) {
@@ -188,10 +201,10 @@ $(function() {
                           '</div>'
                       ].join('\n'),
                       suggestion: function(data) {
-
-
-
-
+ 
+ 
+ 
+ 
                           if (data.TBNAME) {
                               var _suggestion = "<div>" +
                                   data.NAME +
@@ -201,16 +214,64 @@ $(function() {
                               var _suggestion = "<div>" +
                                   data.KEYWORD + "</div>";
                           }
-
-
-
-
+ 
+ 
+ 
+ 
                           return _suggestion;
                       }
                   }
               }
           });*/
     }
+
+    function removed(attrs, tokenAttr) {
+        var $token;
+        $('.token').each(function() {
+            $token = $(this);
+            $token.map(function() {
+                var $token = $(this);
+                if ($token.data('attrs').value == tokenAttr) {
+                    return $token;
+                };
+            })
+        });
+        var options = {
+                attrs: attrs,
+                relatedTarget: $token.get(0)
+            },
+            removeEvent = $.Event('tokenfield:removetoken', options)
+
+        $(this).trigger(removeEvent);
+
+        // Remove event can be intercepted and cancelled
+        if (removeEvent.isDefaultPrevented()) return
+
+        var removedEvent = $.Event('tokenfield:removedtoken', options),
+            changeEvent = $.Event('change', {
+                initiator: 'tokenfield'
+            })
+
+        // Remove token from DOM
+        $token.remove()
+
+        // Trigger events
+        //this.$element.val(this.getTokensList()).trigger(removedEvent).trigger(changeEvent)
+
+        // Focus, when necessary:
+        // When there are no more tokens, or if this was the first token
+        // and it was removed with backspace or it was clicked on
+        // if (!this.$wrapper.find('.token').length || e.type === 'click' || firstToken) this.$input.focus()
+
+        // Adjust input width
+        //this.$input.css('width', this.options.minWidth + 'px')
+        // this.update()
+
+        // e.preventDefault()
+        // e.stopPropagation()
+    }
+
+
 
 
 
@@ -240,6 +301,7 @@ $(function() {
                 i++;
                 _itemArr.push(tag);
             } else {
+                isKeywordRemoved = false;
                 emparray[i] = tag.value;
                 temparray[i] = emparray[i];
                 array[j] = i;
@@ -269,7 +331,10 @@ $(function() {
             var index, index1;
             var empremove = [];
             var indexOfBY = emparray.indexOf('BY');
-            var indexOfCOUNT = emparray.indexOf('COUNT OF');
+            var indexOfCnt = emparray.indexOf('COUNT OF');
+            var numberOfPropAfterBy = emparray.length - (indexOfBY + 1);
+            var numberOfPropAfterCnt = emparray.length - (indexOfCnt + 1);
+
             var indexOfCOUNTONE = emparray.indexOf('COUNT OF' + 1);
 
 
@@ -280,22 +345,65 @@ $(function() {
                 } else {
                     index = emparray.indexOf(tag.value);
                 }
-                if (index >= indexOfBY) {
-                    if (indexOfBY !== -1) {
-                        for (var _index = 0; _index < emparray.length; _index++) {
-                            if (_index >= indexOfBY) {
-                                emparray.splice(_index, 1, 0);
-                                temparray.splice(_index, 1, 0);
-                                var options = { attrs: _itemArr[_index], relatedTarget: $(target).closest('.token') }
-                                $('#typeahead').tokenfield('tokenfield:removetoken', options);
+                //To remove By tag if no.of variables after By tag is only one
+                if (numberOfPropAfterBy === 1) {
+                    if (index >= indexOfBY) {
+                        if (indexOfBY !== -1) {
+                            for (var _index = 0; _index < emparray.length; _index++) {
+                                if (_index >= indexOfBY) {
+                                    emparray.splice(_index, 1, 0);
+                                    temparray.splice(_index, 1, 0);
+                                    var options = { attrs: _itemArr[_index], relatedTarget: $(target).closest('.token') }
+                                    if (!isKeywordRemoved) {
+                                        removed(options.attrs, options.attrs.value);
+                                        isKeywordRemoved = true;
+                                    }
+                                    //$('#typeahead').tokenfield('tokenfield:removetoken', options);
+                                }
                             }
+                        } else {
+                            if (index > -1) {
+                                emparray.splice(index, 1, 0);
+                                temparray.splice(index, 1, 0);
+                            }
+                            //  console.log(i);
                         }
                     } else {
                         if (index > -1) {
                             emparray.splice(index, 1, 0);
                             temparray.splice(index, 1, 0);
                         }
-                        //  console.log(i);
+                        console.log(i);
+                    }
+                }
+                if (numberOfPropAfterCnt === 1) {
+                    if (index >= indexOfCnt) {
+                        if (indexOfCnt !== -1) {
+                            for (var _index = 0; _index < emparray.length; _index++) {
+                                if (_index >= indexOfCnt) {
+                                    emparray.splice(_index, 1, 0);
+                                    temparray.splice(_index, 1, 0);
+                                    var options = { attrs: _itemArr[_index], relatedTarget: $(target).closest('.token') }
+                                    if (!isKeywordRemoved) {
+                                        removed(options.attrs, options.attrs.value);
+                                        isKeywordRemoved = true;
+                                    }
+                                    //$('#typeahead').tokenfield('tokenfield:removetoken', options);
+                                }
+                            }
+                        } else {
+                            if (index > -1) {
+                                emparray.splice(index, 1, 0);
+                                temparray.splice(index, 1, 0);
+                            }
+                            //  console.log(i);
+                        }
+                    } else {
+                        if (index > -1) {
+                            emparray.splice(index, 1, 0);
+                            temparray.splice(index, 1, 0);
+                        }
+                        console.log(i);
                     }
                 } else {
                     if (index > -1) {
@@ -305,44 +413,11 @@ $(function() {
                     console.log(i);
                 }
             }
-
-
+            button1_onclick();
 
         })
 
 
-
-
-
-
-
-
-    /*$('#typeahead').on('itemAdded', function (event) {
-        var tag = event.item;
-        if (!isKeywordEntered) {
-            if (tag.TBNAME === 'employee') {
-                emparray.push(tag.NAME);
-            } else if (tag.KEYWORD) {
-                temparray.push(tag.KEYWORD);
-                isKeywordEntered = true;
-            }
-        } else {
-            if (tag.TBNAME === 'employee') {
-                temparray.push(tag.NAME);
-            } else if (tag.KEYWORD) {
-                temparray.push(tag.KEYWORD);
-            }
-        }
-
-
-    });
-
-
-
-
-    $('input').on('itemRemoved', function (event) {
-        document.getElementById("panel6").innerHTML = "";
-    });*/
 });
 
 
@@ -381,20 +456,20 @@ function button1_onclick(event) {
         keywordArr.push(keyword);
 
 
-        syskeyword(keyword);
+        syskeyword(keywordArr, keyword);
     }
 
 
 
 
-    function syskeyword(keywrd) {
+    function syskeyword(keywrd_arr, keywrd) {
 
 
 
 
         if (keywrd == "COUNT OF") {
             _print = "SUM";
-            _actionVar = " " + "CNT." + emparray[key + 1];
+            _actionVar += " " + "CNT." + emparray[key + 1];
             temparray[key + 1] = 0;
         }
 
@@ -418,7 +493,9 @@ function button1_onclick(event) {
             }
             if (byarray == array.length - 1) {
                 for (var x = 0; x < numberOfVarAfterBy; x++) {
-                    _byStr += ' BY ' + emparray[bypos + 1];
+                    if (emparray[bypos + 1] !== 0) {
+                        _byStr += ' BY ' + emparray[bypos + 1];
+                    }
                     temparray[bypos + 1] = 0;
                     bypos++;
                 }
@@ -525,3 +602,14 @@ function ajaxcall(dynamicurl) {
         }
     });
 }
+
+
+//Begin function combobox1_onchange
+function combobox1_onchange(event) {
+    var eventObject = event ? event : window.event;
+    var ctrl = eventObject.target ? eventObject.target : eventObject.srcElement;
+    // TODO: Add your event handler code here
+
+
+}
+//End function combobox1_onchange
