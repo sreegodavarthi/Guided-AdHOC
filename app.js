@@ -9,26 +9,25 @@ $(function() {
     var keywords = [];
     var parse;
     $.when(
-        $.get('/ibi_apps/run.bip?BIP_REQUEST_TYPE=BIP_RUN&BIP_folder=IBFS%253A%252FEDA%252FEDASERVE%252Ftypeahead&BIP_item=procedure_typeahead.fex&windowHandle=436960&IBI_random=4516.2870024981075', function(data) {
-            parse = JSON.parse(data);
-            items = parse.records;
-        }),
-        $.get('/ibi_apps/run.bip?BIP_REQUEST_TYPE=BIP_RUN&BIP_folder=IBFS%253A%252FEDA%252FEDASERVE%252Ftypeahead&BIP_item=procedure2.fex&windowHandle=271353&IBI_random=2165.7337772878413', function(data) {
-            parse = JSON.parse(data);
-            keywords = parse.records;
-        })
-
-        // $.get('data/data.json', function (data) {
-        //     //store records in items array
-        //     items = data.records;
+        // $.get('/ibi_apps/run.bip?BIP_REQUEST_TYPE=BIP_RUN&BIP_folder=IBFS%253A%252FEDA%252FEDASERVE%252Ftypeahead&BIP_item=procedure_typeahead.fex&windowHandle=436960&IBI_random=4516.2870024981075', function(data) {
+        //     parse = JSON.parse(data);
+        //     items = parse.records;
         // }),
-
-
-        // //get json from second record
-        // $.get('data/data1.json', function (data) {
-        //     //store records in keywords array
-        //     keywords = data.records;
+        // $.get('/ibi_apps/run.bip?BIP_REQUEST_TYPE=BIP_RUN&BIP_folder=IBFS%253A%252FEDA%252FEDASERVE%252Ftypeahead&BIP_item=procedure2.fex&windowHandle=271353&IBI_random=2165.7337772878413', function(data) {
+        //     parse = JSON.parse(data);
+        //     keywords = parse.records;
         // })
+
+        $.get('data/data.json', function(data) {
+            //store records in items array
+            items = data.records;
+        }),
+
+        //get json from second record
+        $.get('data/data1.json', function(data) {
+            //store records in keywords array
+            keywords = data.records;
+        })
 
     ).then(function() {
         var result = {};
@@ -119,41 +118,7 @@ $(function() {
         });
     }
 
-    //use this function to manually remove chip from UI 
-    function removed(attrs, tokenAttr) {
-        var $token;
-        $('.token').each(function() {
-            $token = $(this);
-            $token.map(function() {
-                var $token = $(this);
-                if ($token.data('attrs').value == tokenAttr) {
-                    return $token;
-                }
-            });
-        });
-        var options = {
-                attrs: attrs,
-                relatedTarget: $token.get(0)
-            },
-            removeEvent = $.Event('tokenfield:removetoken', options)
 
-
-        $(this).trigger(removeEvent);
-
-
-        // Remove event can be intercepted and cancelled
-        if (removeEvent.isDefaultPrevented()) return;
-
-
-        var removedEvent = $.Event('tokenfield:removedtoken', options),
-            changeEvent = $.Event('change', {
-                initiator: 'tokenfield'
-            });
-
-
-        // Remove token from DOM
-        $token.remove();
-    }
 
     //to change the styles of chip based on its TBNAME
     function configureBkgColor(e) {
@@ -188,7 +153,33 @@ $(function() {
     })
 
     .on('tokenfield:edittoken', function(e) {})
-        .on('tokenfield:removetoken', function(event) {})
+        .on('tokenfield:removetoken', function(event) {
+            var tag = event.attrs;
+            var tokens = $('#typeahead').tokenfield('getTokens');
+            //build an object with modified chips
+            var resultObj = _buildNewString(tokens);
+            //get strings of all chips entered as array
+            if (resultObj) {
+                var enteredStringArr = resultObj.string_arr;
+                //get keywords position array
+                var keywordPosArr = resultObj.keyword_arr;
+
+                //get the index of removed chip
+                var index = enteredStringArr.indexOf(tag.value);
+                if (index > -1) {
+                    //delete it from the array
+                    enteredStringArr.splice(index, 1);
+                    //if keyword got removed gets it's index
+                    var keywordIndex = keywordPosArr.indexOf(index);
+                    //if it exists remove it from array
+                    if (keywordIndex > -1) {
+                        //keywordPosArr.splice(keywordIndex, 1);
+                        getKeywordPosAndDeleteTillNextKeyword(keywordIndex);
+                    }
+                }
+            }
+
+        })
         .on('tokenfield:removedtoken', function(event) {
             //document.getElementById("panel6").innerHTML = " ";
             var target = event.relatedTarget;
@@ -200,27 +191,115 @@ $(function() {
             //get strings of all chips entered as array
             var enteredStringArr = resultObj.string_arr;
             //get keywords position array
-            var keywordPosArr = resultObj.keyword_arr;
+            //var keywordPosArr = resultObj.keyword_arr;
 
-            //get the index of removed chip
-            var index = enteredStringArr.indexOf(tag.value);
-            //if chip found
-            if (index > -1) {
-                //delete it from the array
-                enteredStringArr.splice(index, 1);
-                //if keyword got removed gets it's index
-                var keywordIndex = keywordPosArr.indexOf(index);
-                //if it exists remove it from array
-                if (keywordIndex > -1) {
-                    keywordPosArr.splice(keywordIndex, 1);
-                }
-            }
             //build an object with modified chips
-            _buildNewString(enteredStringArr);
+            // _buildNewString(enteredStringArr);
 
             button1_onclick();
         });
 });
+
+function getKeywordPosAndDeleteTillNextKeyword(keywordIndex) {
+    var tokens = $('#typeahead').tokenfield('getTokens');
+    var from = 0;
+    var to = 0;
+    if (tokens.length > 0) {
+        //build the query
+        var resultObj = _buildNewString(tokens);
+        //get the array of strings entered
+        var enteredStringArr = resultObj.string_arr;
+        //get the array of positions of keywords
+        var keywordPosArr = resultObj.keyword_arr;
+        if (keywordPosArr.length >= 1) {
+            //get the element at remove keywordIndex
+            from = keywordPosArr[keywordIndex];
+            to = keywordPosArr[keywordIndex + 1] ? keywordPosArr[keywordIndex + 1] : (tokens.length);
+            if (from === (to - 1)) {
+                removed(tokens[from], tokens[from].value);
+            } else {
+                for (var me = from; me < to; me++) {
+                    //code to remove the strings from array and DOM
+                    removed(tokens[me], tokens[me].value);
+                }
+            }
+
+        }
+        /* else {
+
+             //for (var kl = 0; kl < keywordPosArr.length; kl++) {
+             from = keywordPosArr[keywordIndex];
+             to = keywordPosArr[keywordIndex + 1] ? keywordPosArr[keywordIndex + 1] : (tokens.length);
+             if (from === (to - 1)) {
+                 removed(tokens[from], tokens[from].value);
+             } else {
+                 for (var ge = from; ge < to; ge++) {
+                     removed(tokens[ge], tokens[ge].value);
+                 }
+             }
+
+             //}
+         }*/
+    }
+
+}
+
+function getDOMElement(tokenAttr) {
+    var $token;
+    var result;
+    var domElements = $('.token');
+    var _len = $('.token').length;
+    for (var kk = 0; kk < _len; kk++) {
+        //$token = $(this);
+        if ($(domElements[kk]).data('attrs').value == tokenAttr) {
+            result = $(domElements[kk]);
+            return result;
+        }
+    }
+}
+//use this function to manually remove chip from UI 
+function removed(attrs, tokenAttr) {
+    /*var $token;
+    var result;
+     $('.token').each(function () {
+         $token = $(this);
+         $token.map(function () {
+             var $token = $(this);
+             if ($token.data('attrs').value == tokenAttr) {
+                 //return $token;
+                 result = $token;
+                 return result;
+             }
+         });
+     });*/
+
+
+    var domEl = getDOMElement(tokenAttr);
+
+    var options = {
+            attrs: attrs,
+            relatedTarget: domEl.get(0)
+        },
+        removeEvent = $.Event('tokenfield:removetoken', options)
+
+
+    $(this).trigger(removeEvent);
+
+
+    // Remove event can be intercepted and cancelled
+    if (removeEvent.isDefaultPrevented()) return;
+
+
+    var removedEvent = $.Event('tokenfield:removedtoken', options),
+        changeEvent = $.Event('change', {
+            initiator: 'tokenfield'
+        });
+
+
+    // Remove token from DOM
+    //$token.remove();
+    domEl.remove();
+}
 
 
 function _buildNewString(tokens) {
@@ -398,6 +477,11 @@ function button1_onclick(event) {
                 //}
             }
         }
+    } else {
+        //if no keywords found
+        for (var kk = 0; kk < enteredStringArr.length; kk++) {
+            _actionVar = _actionVar + ' ' + enteredStringArr[kk];
+        }
     }
 
     var dynamicurl = "&FEXTYPE=TABLE&DATABASE=EMPLOYEE&ACTION=" + _action + "&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byStr + "&WHERESTRING=" + _whereStr;
@@ -431,8 +515,6 @@ function combobox1_onchange(event) {
     var eventObject = event ? event : window.event;
     var ctrl = eventObject.target ? eventObject.target : eventObject.srcElement;
     // TODO: Add your event handler code here
-
-
 
 
 }
