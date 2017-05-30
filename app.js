@@ -1,27 +1,9 @@
-var emparray = [];
 var k = 0,
     i = 0,
-    j = 0,
-    count = 0;
+    j = 0;
 var key;
-var syskey;
-var temparray = [];
-var _itemArr = [];
-var array = [];
-var isKeywordEntered = false;
-var isKeywordRemoved = false;
-var byQuery = [];
-var byQueryStarted = false;
-var countOfQuery = [];
-var countOfStarted = false;
-var whereQuery = [];
-var whereStarted = false;
-
-
-
 
 $(function() {
-
 
     var items = [];
     var keywords = [];
@@ -36,28 +18,31 @@ $(function() {
             keywords = parse.records;
         })
 
+        // $.get('data/data.json', function (data) {
+        //     //store records in items array
+        //     items = data.records;
+        // }),
 
-        /*    $.get('data/data.json', function (data) {
-            //store records in items array
-            items = data.records;
-        }),
- 
- 
-        //get json from second record
-        $.get('data/data1.json', function (data) {
-            //store records in keywords array
-            keywords = data.records;
-        }) */
+
+        // //get json from second record
+        // $.get('data/data1.json', function (data) {
+        //     //store records in keywords array
+        //     keywords = data.records;
+        // })
+
     ).then(function() {
         var result = {};
+        //concat data from two records into one
         result = items.concat(keywords);
+        //rename NAME property to value
+        //this is done because tokenfield for bootstrap expects value property
         var newData = renameNameToValue(result);
         configureItems(newData);
     });
 
 
 
-
+    //function to replace NAME and KEYWORD properties to "value"
     function renameNameToValue(data) {
         data.forEach(function(e) {
             if (e.NAME) {
@@ -68,21 +53,11 @@ $(function() {
                 e.value = e.KEYWORD;
                 delete e.KEYWORD;
             }
-
-
-
-
         });
         return data;
     }
 
-
-
-
     function configureItems(items) {
-
-
-
 
         var config = new Bloodhound({
             datumTokenizer: function(d) {
@@ -144,7 +119,7 @@ $(function() {
         });
     }
 
-
+    //use this function to manually remove chip from UI 
     function removed(attrs, tokenAttr) {
         var $token;
         $('.token').each(function() {
@@ -180,7 +155,7 @@ $(function() {
         $token.remove();
     }
 
-
+    //to change the styles of chip based on its TBNAME
     function configureBkgColor(e) {
         var target = e.relatedTarget;
         var item = e.attrs;
@@ -200,181 +175,85 @@ $(function() {
     }
 
 
-    function buildString(e) {
-        var tag = e.attrs;
-        //push employee type
-        if (tag.TBNAME === 'employee') {
-            emparray[i] = tag.value;
-            temparray[i] = emparray[i];
-            i++;
-            _itemArr.push(tag);
-            if (byQueryStarted) {
-                byQuery.push(tag.value);
-            } else if (countOfStarted) {
-                countOfQuery.push(tag.value);
-            } else if (whereStarted) {
-                whereQuery.push(tag.value);
-            }
-        } else if (tag.TBNAME === 'empdata') {
-            return;
-        }
-        //push other types
-        else {
-            isKeywordEntered = true;
-            isKeywordRemoved = !isKeywordEntered;
-
-
-            if (tag.value === 'BY') {
-                byQueryStarted = true;
-                countOfStarted = false;
-                whereStarted = false;
-                byQuery.push(tag.value);
-            } else if (tag.value === 'COUNT OF') {
-                countOfStarted = true;
-                byQueryStarted = false;
-                whereStarted = false;
-                countOfQuery.push(tag.value);
-            } else if (tag.value === 'WHERE') {
-                whereStarted = true;
-                countOfStarted = false;
-                byQueryStarted = false;
-                whereQuery.push(tag.value);
-            }
-            emparray[i] = tag.value;
-            temparray[i] = emparray[i];
-            array[j] = i;
-            i++;
-            j++;
-            _itemArr.push(tag);
-        }
-        console.log(byQuery);
-        console.log(countOfQuery);
-        console.log(whereQuery);
-    }
-
 
     $('#typeahead')
 
 
-    .on('tokenfield:createtoken', function(e) {
-        /* var data = e.attrs.value.split('|')
-         e.attrs.value = data[1] || data[0]
-         e.attrs.label = data[1] ? data[0] + ' (' + data[1] + ')' : data[0]*/
-    })
+    .on('tokenfield:createtoken', function(e) {})
 
 
     .on('tokenfield:createdtoken', function(event) {
         //change the chip color based on its type
         configureBkgColor(event);
-
-
-        //to build the string once token is entered
-        buildString(event);
     })
 
-
-    .on('tokenfield:edittoken', function(e) {
-            /*if (e.attrs.label !== e.attrs.value) {
-                var label = e.attrs.label.split(' (');
-                e.attrs.value = label[0] + '|' + e.attrs.value;
-            }*/
-        })
-        .on('tokenfield:removetoken', function(event) {
-            var target = event.relatedTarget;
-            console.log(target);
-        })
+    .on('tokenfield:edittoken', function(e) {})
+        .on('tokenfield:removetoken', function(event) {})
         .on('tokenfield:removedtoken', function(event) {
-            var target = event.relatedTarget;
             //document.getElementById("panel6").innerHTML = " ";
-            /*var tag = event.attrs;
-            var index, index1;
-            var empremove = [];
-            var indexOfBY = emparray.indexOf('BY');
-            var indexOfCnt = emparray.indexOf('COUNT OF');
-            var numberOfPropAfterBy = emparray.length - (indexOfBY + 1);
-            var numberOfPropAfterCnt = emparray.length - (indexOfCnt + 1);
- 
- 
-            var indexOfCOUNTONE = emparray.indexOf('COUNT OF' + 1);
-            if (tag) {
-                if (tag.TBNAME) {
-                    index = emparray.indexOf(tag.value);
-                } else {
-                    index = emparray.indexOf(tag.value);
-                }
-                //To remove By tag if no.of variables after By tag is only one
-                if (numberOfPropAfterBy === 1) {
-                    if (index >= indexOfBY) {
-                        if (indexOfBY !== -1) {
-                            for (var _index = 0; _index < emparray.length; _index++) {
-                                if (_index >= indexOfBY) {
-                                    emparray.splice(_index, 1, 0);
-                                    temparray.splice(_index, 1, 0);
-                                    var options = {
-                                        attrs: _itemArr[_index],
-                                        relatedTarget: $(target).closest('.token')
-                                    };
-                                    if (!isKeywordRemoved) {
-                                        removed(options.attrs, options.attrs.value);
-                                        isKeywordRemoved = true;
-                                    }
-                                }
-                            }
-                        } else {
-                            if (index > -1) {
-                                emparray.splice(index, 1, 0);
-                                temparray.splice(index, 1, 0);
-                            }
-                        }
-                    } else {
-                        if (index > -1) {
-                            emparray.splice(index, 1, 0);
-                            temparray.splice(index, 1, 0);
-                        }
-                        console.log(i);
-                    }
-                }
-                if (numberOfPropAfterCnt === 1) {
-                    if (index >= indexOfCnt) {
-                        if (indexOfCnt !== -1) {
-                            for (var _index = 0; _index < emparray.length; _index++) {
-                                if (_index >= indexOfCnt) {
-                                    emparray.splice(_index, 1, 0);
-                                    temparray.splice(_index, 1, 0);
-                                    var _options = {
-                                        attrs: _itemArr[_index],
-                                        relatedTarget: $(target).closest('.token')
-                                    };
-                                    if (!isKeywordRemoved) {
-                                        removed(_options.attrs, _options.attrs.value);
-                                        isKeywordRemoved = true;
-                                    }
-                                }
-                            }
-                        } else {
-                            if (index > -1) {
-                                emparray.splice(index, 1, 0);
-                                temparray.splice(index, 1, 0);
-                            }
-                        }
-                    } else {
-                        if (index > -1) {
-                            emparray.splice(index, 1, 0);
-                            temparray.splice(index, 1, 0);
-                        }
-                    }
-                } else {
-                    if (index > -1) {
-                        emparray.splice(index, 1, 0);
-                        temparray.splice(index, 1, 0);
-                    }
+            var target = event.relatedTarget;
+            var tag = event.attrs;
+            //get all tokens 
+            var tokens = $('#typeahead').tokenfield('getTokens');
+            //build an object with modified chips
+            var resultObj = _buildNewString(tokens);
+            //get strings of all chips entered as array
+            var enteredStringArr = resultObj.string_arr;
+            //get keywords position array
+            var keywordPosArr = resultObj.keyword_arr;
+
+            //get the index of removed chip
+            var index = enteredStringArr.indexOf(tag.value);
+            //if chip found
+            if (index > -1) {
+                //delete it from the array
+                enteredStringArr.splice(index, 1);
+                //if keyword got removed gets it's index
+                var keywordIndex = keywordPosArr.indexOf(index);
+                //if it exists remove it from array
+                if (keywordIndex > -1) {
+                    keywordPosArr.splice(keywordIndex, 1);
                 }
             }
-            button1_onclick();*/
+            //build an object with modified chips
+            _buildNewString(enteredStringArr);
+
+            button1_onclick();
         });
 });
 
 
+function _buildNewString(tokens) {
+    var actionVarArr = [];
+    var keywordArr = [];
+    var resultObj = {};
+    var cc = 0;
+    //if tokens exists
+    if (tokens) {
+        if (tokens.length > 0) {
+            for (var bb = 0; bb < tokens.length; bb++) {
+                //if token belongs to employee table_name push it to actionVarArr
+                //actionVarArr holds the strings of all chips entered till now
+                if (tokens[bb].TBNAME === 'employee') {
+                    actionVarArr[bb] = tokens[bb].value;
+                } else if (tokens[bb].TBNAME === 'empdata') {
+                    return;
+                } else {
+                    //if token is a keyword, get the index and push it to keywordArr
+                    //keywordArr holds the positions of all keywords
+                    actionVarArr[bb] = tokens[bb].value;
+                    keywordArr[cc] = bb;
+                    cc++;
+                }
+            }
+        }
+    }
+    resultObj = {
+        string_arr: actionVarArr,
+        keyword_arr: keywordArr
+    };
+    return resultObj;
+}
 
 function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
     var result_keywrd_Arr = [];
@@ -383,29 +262,54 @@ function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
     if (keywrdPosArr.length === 0) {
         return;
     }
+    //if no. of keywords are one in entered query, then do this
     if (keywrdPosArr.length === 1) {
-        for (var i = keywrdPosArr[0]; i < tokens.length - 1; i++) {
-            if (tokens[keywrdPosArr[0]].value === 'COUNT OF') {
-                result_str += ' ' + 'CNT.' + enteredVal[i + 1];
-            } else {
-                result_str += ' ' + tokens[keywrdPosArr[0]].value + ' ' + enteredVal[i + 1];
+        //if the keyword is at last position
+        if (keywrdPosArr[0] === (tokens.length - 1)) {
+            //push the keyword value to result_str
+            result_str = tokens[tokens.length - 1].value;
+            //make that object isKeyStr as true
+            //isKeyStr --  property to recognize whether an object is a keyword string or normal action variable
+            //we're appending isKeyStr property to those properties which are keyword strings
+            tokens[tokens.indexOf(tokens[tokens.length - 1])].isKeyStr = true;
+        } else {
+            //if the keyword is not at last position
+            for (var i = keywrdPosArr[0]; i < tokens.length - 1; i++) {
+                if (tokens[keywrdPosArr[0]].value === 'COUNT OF') {
+                    //this is a special check for "COUNT OF", if "COUNT OF" is entered, while sending it to server make it CNT.
+                    result_str += ' ' + 'CNT.' + ' ' + enteredVal[i + 1];
+                } else {
+                    result_str += ' ' + tokens[keywrdPosArr[0]].value + ' ' + enteredVal[i + 1];
+                }
+                //add isKeyStr property to each keyword_str
+                tokens[keywrdPosArr[0]].isKeyStr = true;
+                tokens[enteredVal.indexOf(enteredVal[i + 1])].isKeyStr = true;
             }
-            //add isKeyStr property to each keyword_str
-            tokens[keywrdPosArr[0]].isKeyStr = true;
-            tokens[enteredVal.indexOf(enteredVal[i + 1])].isKeyStr = true;
         }
+
         result_keywrd_Arr.push(result_str);
-    } else {
+    }
+    //if no. of keywords are more than one in entered query, then do this 
+    else {
+        //loop through the keywrdPosArr length no.of times
+        //if number of keywords in query are three, this loop will executes thrice
         for (var k = 0; k < keywrdPosArr.length; k++) {
+            //query string to be formed
             result_str = '';
+            //get the first keyword position, assign to from variable
             var from = keywrdPosArr[k];
+            //get the second keyword position
+            //if the second keyword is at last position, the get the length of tokens and assign to "to" variable
             var to = keywrdPosArr[k + 1] ? keywrdPosArr[k + 1] : (tokens.length);
+            //if the keyword is at last position, then just push the string into result_arr and make its isKeyStr property as true
             if (from === (to - 1)) {
                 result_str = tokens[from].value;
+                tokens[tokens.indexOf(tokens[from])].isKeyStr = true;
             } else {
+                //if the keyword is not at last position, then loop through the array and push the string into result_arr and make its isKeyStr property as true
                 for (var j = from; j < to - 1; j++) {
                     if (tokens[from].value === 'COUNT OF') {
-                        result_str += ' ' + 'CNT.' + ' ' + enteredVal[j + 1];
+                        result_str += ' ' + 'CNT.' + enteredVal[j + 1];
                     } else {
                         result_str += ' ' + tokens[from].value + ' ' + enteredVal[j + 1];
                     }
@@ -416,7 +320,6 @@ function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
             result_keywrd_Arr.push(result_str);
         }
     }
-    // return result_keywrd_Arr;
     resultObj = {
         token: tokens,
         arr: result_keywrd_Arr
@@ -424,14 +327,17 @@ function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
     return resultObj;
 }
 
+//to build actionVariable string
 function buildActionVar(tokenObj) {
     var filteredArr = [];
     if (tokenObj) {
+        //loop through all tokens and push only items which don't have isKeyStr
+        //items which have isKeyStr will be considered as KeywordStrings
         for (var x = 0; x < tokenObj.length; x++) {
             if (!tokenObj[x].isKeyStr) {
                 filteredArr.push(tokenObj[x]);
             } else {
-                //nothing
+                //do nothing
             }
         }
     }
@@ -446,149 +352,57 @@ function button1_onclick(event) {
     var _byStr = '';
     var _action = 'PRINT';
     var _whereStr = '';
-    var bykey;
-    var wherekey;
-    var countkey;
     var keyword = [];
-    var keywordArr = [];
-
 
     var tokens = $('#typeahead').tokenfield('getTokens');
-    var enteredStringArr = emparray;
-
-
-    var keywordPosArr = array;
-
+    //build the query
+    var resultObj = _buildNewString(tokens);
+    //get the array of strings entered
+    var enteredStringArr = resultObj.string_arr;
+    //get the array of positions of keywords
+    var keywordPosArr = resultObj.keyword_arr;
 
     var result_obj = buildKeywordStrings(enteredStringArr, keywordPosArr, tokens);
-    var keywordBuilderArr = result_obj.arr;
-    var modifiedTokens = result_obj.token;
-
-    var actionVarBuilderArr = buildActionVar(modifiedTokens);
-
-    for (var ml = 0; ml < actionVarBuilderArr.length; ml++) {
-        _actionVar = _actionVar + ' ' + actionVarBuilderArr[ml].value;
-    }
-
-
-
-
-    console.log(keywordBuilderArr);
-
-
-    //getReqParams(keywordBuilderArr);
-
-    for (var l = 0; l < keywordBuilderArr.length; l++) {
-        if (keywordBuilderArr[l].startsWith(" BY")) {
-            _byStr = keywordBuilderArr[l];
-        } else if (keywordBuilderArr[l].startsWith(" WHERE")) {
-            _whereStr = keywordBuilderArr[l];
-        } else if (keywordBuilderArr[l].startsWith("IS EQUAL") &&
-            (enteredStringArr.indexOf("IS EQUAL") === (enteredStringArr.indexOf("WHERE") + 2))) {
-            _whereStr += ' EQ ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
-        } else if (keywordBuilderArr[l].startsWith("IS LESS THAN") &&
-            (enteredStringArr.indexOf("IS LESS THAN") === (enteredStringArr.indexOf("WHERE") + 2))) {
-            _whereStr += ' LT ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
-        } else if (keywordBuilderArr[l].startsWith("IS GREATER THAN") &&
-            (enteredStringArr.indexOf("IS GREATER THAN") === (enteredStringArr.indexOf("WHERE") + 2))) {
-            _whereStr += ' GT ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
-        } else if (keywordBuilderArr[l].startsWith("IS NOT EQUAL TO") &&
-            (enteredStringArr.indexOf("IS NOT EQUAL TO") === (enteredStringArr.indexOf("WHERE") + 2))) {
-            _whereStr += ' NQ ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
-        } else if (keywordBuilderArr[l].startsWith(" CNT.")) {
-            _action = "SUM";
-            _actionVar = keywordBuilderArr[l];
+    if (result_obj) {
+        var keywordBuilderArr = result_obj.arr;
+        var modifiedTokens = result_obj.token;
+        var actionVarBuilderArr = buildActionVar(modifiedTokens);
+        //form actionVariable
+        for (var ml = 0; ml < actionVarBuilderArr.length; ml++) {
+            _actionVar = _actionVar + ' ' + actionVarBuilderArr[ml].value;
         }
-    }
 
-
-    /*for (var l = 0; l < array.length; l++) {
-        key = array[l];
-        temparray[key] = 0;
-        keyword = emparray[key];
-        keywordArr.push(keyword);
-    }
-    syskeyword(keywordArr);
- 
- 
-    function syskeyword(keywrd_arr) {
-        if (keywrd_arr.length === 1) {
-            var keywrd = keywrd_arr[0];
-            if (keywrd == "COUNT OF") {
+        for (var l = 0; l < keywordBuilderArr.length; l++) {
+            if (keywordBuilderArr[l].startsWith(" BY")) {
+                _byStr = keywordBuilderArr[l];
+            } else if (keywordBuilderArr[l].startsWith(" WHERE")) {
+                _whereStr = keywordBuilderArr[l];
+            } else if (keywordBuilderArr[l].startsWith("IS EQUAL") &&
+                (enteredStringArr.indexOf("IS EQUAL") === (enteredStringArr.indexOf("WHERE") + 2))) {
+                _whereStr += ' EQ ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
+            } else if (keywordBuilderArr[l].startsWith("IS LESS THAN") &&
+                (enteredStringArr.indexOf("IS LESS THAN") === (enteredStringArr.indexOf("WHERE") + 2))) {
+                _whereStr += ' LT ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
+            } else if (keywordBuilderArr[l].startsWith("IS GREATER THAN") &&
+                (enteredStringArr.indexOf("IS GREATER THAN") === (enteredStringArr.indexOf("WHERE") + 2))) {
+                _whereStr += ' GT ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
+            } else if (keywordBuilderArr[l].startsWith("IS NOT EQUAL TO") &&
+                (enteredStringArr.indexOf("IS NOT EQUAL TO") === (enteredStringArr.indexOf("WHERE") + 2))) {
+                _whereStr += ' NQ ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
+            } else if (keywordBuilderArr[l].startsWith(" CNT.")) {
                 _action = "SUM";
-                _actionVar += " " + "CNT." + emparray[key + 1];
-                temparray[key + 1] = 0;
+                _actionVar = keywordBuilderArr[l];
+            } else {
+                //if ((enteredStringArr.indexOf(keywordBuilderArr[l]) === (enteredStringArr.indexOf("WHERE") + 3))) {
+                //  _whereStr += keywordBuilderArr[l];
+                //}
             }
-            if (keywrd == "BY") {
-                var bypos = emparray.indexOf('BY');
-                var _tempByPos = bypos + 1;
-                var byarray;
-                var numberOfVarAfterBy = 0;
-                numberOfVarAfterBy = emparray.length - _tempByPos;
-                for (var xy = 0; xy < array.length; xy++) {
-                    if (array[xy] == bypos) {
-                        byarray = xy;
-                    }
-                }
-                if (byarray == array.length - 1) {
-                    for (var x = 0; x < numberOfVarAfterBy; x++) {
-                        if (emparray[bypos + 1] !== 0) {
-                            _byStr += ' BY ' + emparray[bypos + 1];
-                        }
-                        temparray[bypos + 1] = 0;
-                        bypos++;
-                    }
-                }
-            }
-            if (keywrd == "WHERE") {
-                wherekey = emparray[key + 1];
-                temparray[key + 1] = 0;
-                //  alert(wherekey);
-                if (emparray[key + 2] == "IS EQUAL") {
-                    temparray[key + 2] = 0;
-                    temparray[key + 3] = 0;
-                    wherekey = wherekey + ' EQ ';
-                }
-                if (emparray[key + 2] == "IS LESS THAN") {
-                    temparray[key + 2] = 0;
-                    temparray[key + 3] = 0;
-                    wherekey = wherekey + ' LT ';
-                }
-                if (emparray[key + 2] == "IS GREATER THAN") {
-                    temparray[key + 2] = 0;
-                    temparray[key + 3] = 0;
-                    wherekey = wherekey + ' GT ';
-                }
-                if (emparray[key + 2] == "IS NOT EQUAL TO") {
-                    temparray[key + 2] = 0;
-                    temparray[key + 3] = 0;
-                    wherekey = wherekey + ' NQ ';
-                }
- 
- 
-                _whereStr = 'WHERE ' + wherekey + "'" + emparray[key + 3] + "'";
-            }
-        } else {
- 
- 
         }
- 
- 
     }
- 
- 
-    for (var m = 0; m < temparray.length; m++) {
-        if (isNaN(temparray[m])) {
-            _actionVar += " " + temparray[m];
-        }
-    }*/
-
 
     var dynamicurl = "&FEXTYPE=TABLE&DATABASE=EMPLOYEE&ACTION=" + _action + "&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byStr + "&WHERESTRING=" + _whereStr;
-    //alert(dynamicurl);
+
     ajaxcall(dynamicurl);
-
-
 }
 //End function button1_onclick
 
