@@ -386,7 +386,7 @@ function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
     if (keywrdPosArr.length === 1) {
         for (var i = keywrdPosArr[0]; i < tokens.length - 1; i++) {
             if (tokens[keywrdPosArr[0]].value === 'COUNT OF') {
-                result_str += ' ' + 'CNT.' + ' ' + enteredVal[i + 1];
+                result_str += ' ' + 'CNT.' + enteredVal[i + 1];
             } else {
                 result_str += ' ' + tokens[keywrdPosArr[0]].value + ' ' + enteredVal[i + 1];
             }
