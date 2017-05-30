@@ -9,24 +9,13 @@
     <link href="dist/css/tokenfield-typeahead.css" type="text/css" rel="stylesheet">
     <!-- Tokenfield CSS -->
     <link href="dist/css/bootstrap-tokenfield.css" type="text/css" rel="stylesheet">
+    <link href="styles.css" type="text/css" rel="stylesheet">
 </head>
 
 <body>
-    <!--<div class="container-fluid" style="padding:0">
-        <nav>
-            <a href="#" class="brand-logo center">Logo</a>
-        </nav>
-        <div class="row" style="margin-top:50px;">
-            <div id="typeahead" class="col-md-10">
-                <input type="text" id="mytypeahead" onkeydown="search(this)" />
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-primary">Submit</button>
-            </div>
-        </div>
-    </div>-->
+
     <div class="container">
-        <input type="text" class="form-control" id="typeahead" />
+        <input type="text" class="form-control" style="margin-top:50px" id="typeahead" />
     </div>
 
     <script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
@@ -34,41 +23,7 @@
     <script type="text/javascript" src="dist/bootstrap-tokenfield.js" charset="UTF-8"></script>
     <script type="text/javascript" src="js/typeahead.bundle.min.js"></script>
     <script type="text/javascript" src="app.js"></script>
-    <!--<script>
-        var engine = new Bloodhound({
-            local: [{
-                value: 'red'
-            }, {
-                value: 'blue'
-            }, {
-                value: 'green'
-            }, {
-                value: 'yellow'
-            }, {
-                value: 'violet'
-            }, {
-                value: 'brown'
-            }, {
-                value: 'purple'
-            }, {
-                value: 'black'
-            }, {
-                value: 'white'
-            }],
-            datumTokenizer: function (d) {
-                return Bloodhound.tokenizers.whitespace(d.value);
-            },
-            queryTokenizer: Bloodhound.tokenizers.whitespace
-        });
 
-        engine.initialize();
-
-        $('#tokenfield-typeahead').tokenfield({
-            typeahead: [null, {
-                source: engine.ttAdapter()
-            }]
-        });
-    </script>-->
 </body>
 
 </html>
