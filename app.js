@@ -3,21 +3,24 @@ var k = 0,
     i = 0,
     j = 0,
     count = 0;
-var key, m;
+var key;
 var syskey;
 var temparray = [];
 var _itemArr = [];
-var keywordArr = [];
 var array = [];
 var isKeywordEntered = false;
 var isKeywordRemoved = false;
+var byQuery = [];
+var byQueryStarted = false;
+var countOfQuery = [];
+var countOfStarted = false;
+var whereQuery = [];
+var whereStarted = false;
+
+
 
 
 $(function() {
-
-
-
-
 
 
     var items = [];
@@ -32,29 +35,27 @@ $(function() {
             parse = JSON.parse(data);
             keywords = parse.records;
         })
-        //get json from first record
-        /* $.get('data/data.json', function (data) {
-             //store records in items array
-             items = data.records;
-         }),
+
+
+        /*    $.get('data/data.json', function (data) {
+            //store records in items array
+            items = data.records;
+        }),
  
  
-         //get json from second record
-         $.get('data/data1.json', function (data) {
-             //store records in keywords array
-             keywords = data.records;
-         }) */
+        //get json from second record
+        $.get('data/data1.json', function (data) {
+            //store records in keywords array
+            keywords = data.records;
+        }) */
     ).then(function() {
-
-
         var result = {};
         result = items.concat(keywords);
         var newData = renameNameToValue(result);
         configureItems(newData);
-
-
-
     });
+
+
 
 
     function renameNameToValue(data) {
@@ -69,12 +70,18 @@ $(function() {
             }
 
 
+
+
         });
         return data;
     }
 
 
+
+
     function configureItems(items) {
+
+
 
 
         var config = new Bloodhound({
@@ -86,8 +93,6 @@ $(function() {
             local: $.map(items, function(item, key) {
 
 
-
-
                 return {
                     // value: item.value || '',
                     //NAME: item.NAME || '',
@@ -97,8 +102,6 @@ $(function() {
                 };
             })
         });
-
-
 
 
         config.initialize();
@@ -139,91 +142,8 @@ $(function() {
                 }
             }]
         });
-
-
-
-
-
-
-
-
-        //var elt = $('#typeahead');
-        /*  elt.materialtags({
-              itemValue: 'value',
-              itemText: function(item) {
- 
- 
- 
- 
-                  if (item) {
-                      if (item.NAME) {
-                          return item.NAME;
-                      } else {
-                          return item.KEYWORD;
-                      }
-                  }
-              },
- 
- 
- 
- 
-              tagClass: function(item) {
-                  if (item.KEYWORD) {
-                      return 'chip chip_green';
-                  } else if (item.TBNAME === 'employee') {
-                      return 'chip chip_blue';
-                  } else if (item.TBNAME === 'empdata') {
-                      return 'chip chip_maroon';
-                  } else {
-                      return 'chip chip_yellow';
-                  }
-              },
-              typeaheadjs: {
-                  name: 'config',
- 
- 
- 
- 
-                  displayKey: function(item) {
-                      if (item) {
-                          if (item.NAME) {
-                              return item.NAME;
-                          } else {
-                              return item.KEYWORD;
-                          }
-                      }
-                  },
-                  source: config.ttAdapter(),
-                  templates: {
-                      empty: [
-                          '<div class="empty-message">',
-                          'Unable to find any match',
-                          '</div>'
-                      ].join('\n'),
-                      suggestion: function(data) {
- 
- 
- 
- 
-                          if (data.TBNAME) {
-                              var _suggestion = "<div>" +
-                                  data.NAME +
-                                  " in " +
-                                  data.TBNAME + "</div>";
-                          } else {
-                              var _suggestion = "<div>" +
-                                  data.KEYWORD + "</div>";
-                          }
- 
- 
- 
- 
-                          return _suggestion;
-                      }
-                  }
-              }
-          });*/
     }
+
 
     function removed(attrs, tokenAttr) {
         var $token;
@@ -233,8 +153,8 @@ $(function() {
                 var $token = $(this);
                 if ($token.data('attrs').value == tokenAttr) {
                     return $token;
-                };
-            })
+                }
+            });
         });
         var options = {
                 attrs: attrs,
@@ -242,82 +162,122 @@ $(function() {
             },
             removeEvent = $.Event('tokenfield:removetoken', options)
 
+
         $(this).trigger(removeEvent);
 
+
         // Remove event can be intercepted and cancelled
-        if (removeEvent.isDefaultPrevented()) return
+        if (removeEvent.isDefaultPrevented()) return;
+
 
         var removedEvent = $.Event('tokenfield:removedtoken', options),
             changeEvent = $.Event('change', {
                 initiator: 'tokenfield'
-            })
+            });
+
 
         // Remove token from DOM
-        $token.remove()
-
-        // Trigger events
-        //this.$element.val(this.getTokensList()).trigger(removedEvent).trigger(changeEvent)
-
-        // Focus, when necessary:
-        // When there are no more tokens, or if this was the first token
-        // and it was removed with backspace or it was clicked on
-        // if (!this.$wrapper.find('.token').length || e.type === 'click' || firstToken) this.$input.focus()
-
-        // Adjust input width
-        //this.$input.css('width', this.options.minWidth + 'px')
-        // this.update()
-
-        // e.preventDefault()
-        // e.stopPropagation()
+        $token.remove();
     }
 
 
+    function configureBkgColor(e) {
+        var target = e.relatedTarget;
+        var item = e.attrs;
+        if (item.TBNAME === 'employee') {
+            $(target).addClass('chip_blue');
+            $(target).children().get(1).style.color = 'white';
+            $(target).children().get(1).style.opacity = 1;
+        } else if (item.TBNAME === 'empdata') {
+            $(target).addClass('chip_maroon');
+            $(target).children().get(1).style.color = 'white';
+            $(target).children().get(1).style.opacity = 1;
+        } else {
+            $(target).addClass('chip_green');
+            $(target).children().get(1).style.color = 'white';
+            $(target).children().get(1).style.opacity = 1;
+        }
+    }
 
 
+    function buildString(e) {
+        var tag = e.attrs;
+        //push employee type
+        if (tag.TBNAME === 'employee') {
+            emparray[i] = tag.value;
+            temparray[i] = emparray[i];
+            i++;
+            _itemArr.push(tag);
+            if (byQueryStarted) {
+                byQuery.push(tag.value);
+            } else if (countOfStarted) {
+                countOfQuery.push(tag.value);
+            } else if (whereStarted) {
+                whereQuery.push(tag.value);
+            }
+        } else if (tag.TBNAME === 'empdata') {
+            return;
+        }
+        //push other types
+        else {
+            isKeywordEntered = true;
+            isKeywordRemoved = !isKeywordEntered;
+
+
+            if (tag.value === 'BY') {
+                byQueryStarted = true;
+                countOfStarted = false;
+                whereStarted = false;
+                byQuery.push(tag.value);
+            } else if (tag.value === 'COUNT OF') {
+                countOfStarted = true;
+                byQueryStarted = false;
+                whereStarted = false;
+                countOfQuery.push(tag.value);
+            } else if (tag.value === 'WHERE') {
+                whereStarted = true;
+                countOfStarted = false;
+                byQueryStarted = false;
+                whereQuery.push(tag.value);
+            }
+            emparray[i] = tag.value;
+            temparray[i] = emparray[i];
+            array[j] = i;
+            i++;
+            j++;
+            _itemArr.push(tag);
+        }
+        console.log(byQuery);
+        console.log(countOfQuery);
+        console.log(whereQuery);
+    }
 
 
     $('#typeahead')
 
 
     .on('tokenfield:createtoken', function(e) {
-        var data = e.attrs.value.split('|')
-        e.attrs.value = data[1] || data[0]
-        e.attrs.label = data[1] ? data[0] + ' (' + data[1] + ')' : data[0]
+        /* var data = e.attrs.value.split('|')
+         e.attrs.value = data[1] || data[0]
+         e.attrs.label = data[1] ? data[0] + ' (' + data[1] + ')' : data[0]*/
     })
 
 
     .on('tokenfield:createdtoken', function(event) {
-        // Über-simplistic e-mail validation
-        /* var re = /\S+@\S+\.\S+/;
-         var valid = re.test(e.attrs.value);
-         if (!valid) {
-             $(e.relatedTarget).addClass('invalid');
-         }*/
-        var tag = event.attrs;
-        if (!isKeywordEntered) {
-            if (tag.TBNAME === 'employee') {
-                emparray[i] = tag.value;
-                temparray[i] = emparray[i];
-                i++;
-                _itemArr.push(tag);
-            } else {
-                isKeywordRemoved = false;
-                emparray[i] = tag.value;
-                temparray[i] = emparray[i];
-                array[j] = i;
-                i++;
-                j++;
-                _itemArr.push(tag);
-            }
-        }
+        //change the chip color based on its type
+        configureBkgColor(event);
+
+
+        //to build the string once token is entered
+        buildString(event);
     })
 
 
     .on('tokenfield:edittoken', function(e) {
-            if (e.attrs.label !== e.attrs.value) {
+            /*if (e.attrs.label !== e.attrs.value) {
                 var label = e.attrs.label.split(' (');
                 e.attrs.value = label[0] + '|' + e.attrs.value;
-            }
+            }*/
         })
         .on('tokenfield:removetoken', function(event) {
             var target = event.relatedTarget;
@@ -325,20 +285,17 @@ $(function() {
         })
         .on('tokenfield:removedtoken', function(event) {
             var target = event.relatedTarget;
-            //  alert('Token removed! Token value was: ' + event.attrs.value);
-            document.getElementById("panel6").innerHTML = " ";
-            var tag = event.attrs;
+            //document.getElementById("panel6").innerHTML = " ";
+            /*var tag = event.attrs;
             var index, index1;
             var empremove = [];
             var indexOfBY = emparray.indexOf('BY');
             var indexOfCnt = emparray.indexOf('COUNT OF');
             var numberOfPropAfterBy = emparray.length - (indexOfBY + 1);
             var numberOfPropAfterCnt = emparray.length - (indexOfCnt + 1);
-
+ 
+ 
             var indexOfCOUNTONE = emparray.indexOf('COUNT OF' + 1);
-
-
-            console.log(_itemArr);
             if (tag) {
                 if (tag.TBNAME) {
                     index = emparray.indexOf(tag.value);
@@ -353,12 +310,14 @@ $(function() {
                                 if (_index >= indexOfBY) {
                                     emparray.splice(_index, 1, 0);
                                     temparray.splice(_index, 1, 0);
-                                    var options = { attrs: _itemArr[_index], relatedTarget: $(target).closest('.token') }
+                                    var options = {
+                                        attrs: _itemArr[_index],
+                                        relatedTarget: $(target).closest('.token')
+                                    };
                                     if (!isKeywordRemoved) {
                                         removed(options.attrs, options.attrs.value);
                                         isKeywordRemoved = true;
                                     }
-                                    //$('#typeahead').tokenfield('tokenfield:removetoken', options);
                                 }
                             }
                         } else {
@@ -366,7 +325,6 @@ $(function() {
                                 emparray.splice(index, 1, 0);
                                 temparray.splice(index, 1, 0);
                             }
-                            //  console.log(i);
                         }
                     } else {
                         if (index > -1) {
@@ -383,12 +341,14 @@ $(function() {
                                 if (_index >= indexOfCnt) {
                                     emparray.splice(_index, 1, 0);
                                     temparray.splice(_index, 1, 0);
-                                    var options = { attrs: _itemArr[_index], relatedTarget: $(target).closest('.token') }
+                                    var _options = {
+                                        attrs: _itemArr[_index],
+                                        relatedTarget: $(target).closest('.token')
+                                    };
                                     if (!isKeywordRemoved) {
-                                        removed(options.attrs, options.attrs.value);
+                                        removed(_options.attrs, _options.attrs.value);
                                         isKeywordRemoved = true;
                                     }
-                                    //$('#typeahead').tokenfield('tokenfield:removetoken', options);
                                 }
                             }
                         } else {
@@ -396,198 +356,246 @@ $(function() {
                                 emparray.splice(index, 1, 0);
                                 temparray.splice(index, 1, 0);
                             }
-                            //  console.log(i);
                         }
                     } else {
                         if (index > -1) {
                             emparray.splice(index, 1, 0);
                             temparray.splice(index, 1, 0);
                         }
-                        console.log(i);
                     }
                 } else {
                     if (index > -1) {
                         emparray.splice(index, 1, 0);
                         temparray.splice(index, 1, 0);
                     }
-                    console.log(i);
                 }
             }
-            button1_onclick();
-
-        })
-
-
+            button1_onclick();*/
+        });
 });
 
 
 
+function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
+    var result_keywrd_Arr = [];
+    var result_str = '';
+    var resultObj = {};
+    if (keywrdPosArr.length === 0) {
+        return;
+    }
+    if (keywrdPosArr.length === 1) {
+        for (var i = keywrdPosArr[0]; i < tokens.length - 1; i++) {
+            if (tokens[keywrdPosArr[0]].value === 'COUNT OF') {
+                result_str += ' ' + 'CNT.' + ' ' + enteredVal[i + 1];
+            } else {
+                result_str += ' ' + tokens[keywrdPosArr[0]].value + ' ' + enteredVal[i + 1];
+            }
+            //add isKeyStr property to each keyword_str
+            tokens[keywrdPosArr[0]].isKeyStr = true;
+            tokens[enteredVal.indexOf(enteredVal[i + 1])].isKeyStr = true;
+        }
+        result_keywrd_Arr.push(result_str);
+    } else {
+        for (var k = 0; k < keywrdPosArr.length; k++) {
+            result_str = '';
+            var from = keywrdPosArr[k];
+            var to = keywrdPosArr[k + 1] ? keywrdPosArr[k + 1] : (tokens.length);
+            if (from === (to - 1)) {
+                result_str = tokens[from].value;
+            } else {
+                for (var j = from; j < to - 1; j++) {
+                    if (tokens[from].value === 'COUNT OF') {
+                        result_str += ' ' + 'CNT.' + ' ' + enteredVal[j + 1];
+                    } else {
+                        result_str += ' ' + tokens[from].value + ' ' + enteredVal[j + 1];
+                    }
+                    tokens[tokens.indexOf(tokens[from])].isKeyStr = true;
+                    tokens[tokens.indexOf(tokens[j + 1])].isKeyStr = true;
+                }
+            }
+            result_keywrd_Arr.push(result_str);
+        }
+    }
+    // return result_keywrd_Arr;
+    resultObj = {
+        token: tokens,
+        arr: result_keywrd_Arr
+    };
+    return resultObj;
+}
+
+function buildActionVar(tokenObj) {
+    var filteredArr = [];
+    if (tokenObj) {
+        for (var x = 0; x < tokenObj.length; x++) {
+            if (!tokenObj[x].isKeyStr) {
+                filteredArr.push(tokenObj[x]);
+            } else {
+                //nothing
+            }
+        }
+    }
+    return filteredArr;
+}
+
 
 //Begin function button1_onclick
 function button1_onclick(event) {
-    var eventObject = event ? event : window.event;
-    var ctrl = eventObject.target ? eventObject.target : eventObject.srcElement;
-    //TODO: Add your event handler code here
 
-
-    //alert("click");
-    console.log(emparray);
-    console.log(array);
     var _actionVar = '';
     var _byStr = '';
-    var _print = 'PRINT';
+    var _action = 'PRINT';
     var _whereStr = '';
     var bykey;
     var wherekey;
     var countkey;
     var keyword = [];
+    var keywordArr = [];
+
+
+    var tokens = $('#typeahead').tokenfield('getTokens');
+    var enteredStringArr = emparray;
+
+
+    var keywordPosArr = array;
+
+
+    var result_obj = buildKeywordStrings(enteredStringArr, keywordPosArr, tokens);
+    var keywordBuilderArr = result_obj.arr;
+    var modifiedTokens = result_obj.token;
+
+    var actionVarBuilderArr = buildActionVar(modifiedTokens);
+
+    for (var ml = 0; ml < actionVarBuilderArr.length; ml++) {
+        _actionVar = _actionVar + ' ' + actionVarBuilderArr[ml].value;
+    }
 
 
 
 
-    for (var l = 0; l < array.length; l++) {
+    console.log(keywordBuilderArr);
 
 
+    //getReqParams(keywordBuilderArr);
+
+    for (var l = 0; l < keywordBuilderArr.length; l++) {
+        if (keywordBuilderArr[l].startsWith(" BY")) {
+            _byStr = keywordBuilderArr[l];
+        } else if (keywordBuilderArr[l].startsWith(" WHERE")) {
+            _whereStr = keywordBuilderArr[l];
+        } else if (keywordBuilderArr[l].startsWith("IS EQUAL") &&
+            (enteredStringArr.indexOf("IS EQUAL") === (enteredStringArr.indexOf("WHERE") + 2))) {
+            _whereStr += ' EQ ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
+        } else if (keywordBuilderArr[l].startsWith("IS LESS THAN") &&
+            (enteredStringArr.indexOf("IS LESS THAN") === (enteredStringArr.indexOf("WHERE") + 2))) {
+            _whereStr += ' LT ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
+        } else if (keywordBuilderArr[l].startsWith("IS GREATER THAN") &&
+            (enteredStringArr.indexOf("IS GREATER THAN") === (enteredStringArr.indexOf("WHERE") + 2))) {
+            _whereStr += ' GT ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
+        } else if (keywordBuilderArr[l].startsWith("IS NOT EQUAL TO") &&
+            (enteredStringArr.indexOf("IS NOT EQUAL TO") === (enteredStringArr.indexOf("WHERE") + 2))) {
+            _whereStr += ' NQ ' + "'" + enteredStringArr[enteredStringArr.indexOf("WHERE") + 3] + "'";
+        } else if (keywordBuilderArr[l].startsWith(" CNT.")) {
+            _action = "SUM";
+            _actionVar = keywordBuilderArr[l];
+        }
+    }
 
 
+    /*for (var l = 0; l < array.length; l++) {
         key = array[l];
         temparray[key] = 0;
         keyword = emparray[key];
         keywordArr.push(keyword);
-
-
-        syskeyword(keywordArr, keyword);
     }
-
-
-
-
-    function syskeyword(keywrd_arr, keywrd) {
-
-
-
-
-        if (keywrd == "COUNT OF") {
-            _print = "SUM";
-            _actionVar += " " + "CNT." + emparray[key + 1];
-            temparray[key + 1] = 0;
-        }
-
-
-
-
-
-
-
-
-        if (keywrd == "BY") {
-            var bypos = emparray.indexOf('BY');
-            var _tempByPos = bypos + 1;
-            var byarray;
-            var numberOfVarAfterBy = 0;
-            numberOfVarAfterBy = emparray.length - _tempByPos;
-            for (var xy = 0; xy < array.length; xy++) {
-                if (array[xy] == bypos) {
-                    byarray = xy;
-                }
+    syskeyword(keywordArr);
+ 
+ 
+    function syskeyword(keywrd_arr) {
+        if (keywrd_arr.length === 1) {
+            var keywrd = keywrd_arr[0];
+            if (keywrd == "COUNT OF") {
+                _action = "SUM";
+                _actionVar += " " + "CNT." + emparray[key + 1];
+                temparray[key + 1] = 0;
             }
-            if (byarray == array.length - 1) {
-                for (var x = 0; x < numberOfVarAfterBy; x++) {
-                    if (emparray[bypos + 1] !== 0) {
-                        _byStr += ' BY ' + emparray[bypos + 1];
+            if (keywrd == "BY") {
+                var bypos = emparray.indexOf('BY');
+                var _tempByPos = bypos + 1;
+                var byarray;
+                var numberOfVarAfterBy = 0;
+                numberOfVarAfterBy = emparray.length - _tempByPos;
+                for (var xy = 0; xy < array.length; xy++) {
+                    if (array[xy] == bypos) {
+                        byarray = xy;
                     }
-                    temparray[bypos + 1] = 0;
-                    bypos++;
                 }
-
-
+                if (byarray == array.length - 1) {
+                    for (var x = 0; x < numberOfVarAfterBy; x++) {
+                        if (emparray[bypos + 1] !== 0) {
+                            _byStr += ' BY ' + emparray[bypos + 1];
+                        }
+                        temparray[bypos + 1] = 0;
+                        bypos++;
+                    }
+                }
             }
+            if (keywrd == "WHERE") {
+                wherekey = emparray[key + 1];
+                temparray[key + 1] = 0;
+                //  alert(wherekey);
+                if (emparray[key + 2] == "IS EQUAL") {
+                    temparray[key + 2] = 0;
+                    temparray[key + 3] = 0;
+                    wherekey = wherekey + ' EQ ';
+                }
+                if (emparray[key + 2] == "IS LESS THAN") {
+                    temparray[key + 2] = 0;
+                    temparray[key + 3] = 0;
+                    wherekey = wherekey + ' LT ';
+                }
+                if (emparray[key + 2] == "IS GREATER THAN") {
+                    temparray[key + 2] = 0;
+                    temparray[key + 3] = 0;
+                    wherekey = wherekey + ' GT ';
+                }
+                if (emparray[key + 2] == "IS NOT EQUAL TO") {
+                    temparray[key + 2] = 0;
+                    temparray[key + 3] = 0;
+                    wherekey = wherekey + ' NQ ';
+                }
+ 
+ 
+                _whereStr = 'WHERE ' + wherekey + "'" + emparray[key + 3] + "'";
+            }
+        } else {
+ 
+ 
         }
-
-
-
-
-
-
-
-
-        if (keywrd == "WHERE") {
-            wherekey = emparray[key + 1];
-            temparray[key + 1] = 0;
-            //  alert(wherekey);
-            if (emparray[key + 2] == "IS EQUAL") {
-                temparray[key + 2] = 0;
-                temparray[key + 3] = 0;
-                wherekey = wherekey + ' EQ ';
-            }
-            if (emparray[key + 2] == "IS LESS THAN") {
-                temparray[key + 2] = 0;
-                temparray[key + 3] = 0;
-                wherekey = wherekey + ' LT ';
-            }
-            if (emparray[key + 2] == "IS GREATER THAN") {
-                temparray[key + 2] = 0;
-                temparray[key + 3] = 0;
-                wherekey = wherekey + ' GT ';
-            }
-            if (emparray[key + 2] == "IS NOT EQUAL TO") {
-                temparray[key + 2] = 0;
-                temparray[key + 3] = 0;
-                wherekey = wherekey + ' NQ ';
-            }
-
-
-
-
-            _whereStr = 'WHERE ' + wherekey + "'" + emparray[key + 3] + "'";
-        }
-
-
-
-
-
-
-
-
+ 
+ 
     }
-
-
-
-
-
-
-    for (m = 0; m < temparray.length; m++) {
-        console.log(temparray[m]);
+ 
+ 
+    for (var m = 0; m < temparray.length; m++) {
         if (isNaN(temparray[m])) {
             _actionVar += " " + temparray[m];
         }
-    }
+    }*/
 
 
-
-
-    var dynamicurl = "&FEXTYPE=TABLE&DATABASE=EMPLOYEE&ACTION=" + _print + "&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byStr + "&WHERESTRING=" + _whereStr;
+    var dynamicurl = "&FEXTYPE=TABLE&DATABASE=EMPLOYEE&ACTION=" + _action + "&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byStr + "&WHERESTRING=" + _whereStr;
     //alert(dynamicurl);
     ajaxcall(dynamicurl);
-
-
-
-
 
 
 }
 //End function button1_onclick
 
 
-
-
 var _url = "/ibi_apps/WFServlet?IBIF_ex=";
 var _ibiapp = "dynamicfex/";
 var _procedure = "procedure_submit";
-
-
-
-
 
 
 function ajaxcall(dynamicurl) {
@@ -609,6 +617,8 @@ function combobox1_onchange(event) {
     var eventObject = event ? event : window.event;
     var ctrl = eventObject.target ? eventObject.target : eventObject.srcElement;
     // TODO: Add your event handler code here
+
+
 
 
 }
