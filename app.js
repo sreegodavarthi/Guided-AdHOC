@@ -4,7 +4,11 @@ var k = 0,
 var key;
 
 
+
+
 $(function() {
+
+
 
 
     var items = [];
@@ -23,6 +27,10 @@ $(function() {
 
 
 
+
+
+
+
     ).then(function() {
         var result = {};
         var _items = {};
@@ -31,11 +39,21 @@ $(function() {
         var newData = renameToValue(result);
         configureData(newData);
 
+
         _items = renameToValue(items);
         configureItems(_items);
         _keywords = renameToValue(keywords);
         //  configureKeywords(_keywords);
     });
+
+
+
+
+
+
+
+
+
 
 
 
@@ -54,7 +72,11 @@ $(function() {
     }
 
 
+
+
     function configureData(items) {
+
+
 
 
         var config = new Bloodhound({
@@ -64,6 +86,8 @@ $(function() {
             //datumTokenizer: Bloodhound.tokenizers.obj.whitespace('NAME', 'KEYWORD'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local: $.map(items, function(item, key) {
+
+
 
 
                 return {
@@ -79,69 +103,6 @@ $(function() {
 
 
 
-        config.initialize();
-
-
-
-
-        $('#typeahead').tokenfield({
-            typeahead: [null, {
-                name: 'config',
-                displayKey: function(item) {
-                    if (item) {
-                        if (item.value) {
-                            return item.value;
-                        } else {
-                            return item.KEYWORD;
-                        }
-                    }
-                },
-                source: config.ttAdapter(),
-                templates: {
-                    empty: [
-                        '<div class="empty-message">',
-                        'Unable to find any match',
-                        '</div>'
-                    ].join('\n'),
-                    suggestion: function(data) {
-                        var _suggestion = '';
-                        if (data.TBNAME) {
-                            _suggestion = "<div>" +
-                                data.value +
-                                " in " +
-                                data.TBNAME + "</div>";
-                        } else {
-                            _suggestion = "<div>" +
-                                data.value + "</div>";
-                        }
-                        return _suggestion;
-                    }
-                }
-            }]
-        });
-    }
-
-    function configureData(items) {
-
-
-        var config = new Bloodhound({
-            datumTokenizer: function(d) {
-                return Bloodhound.tokenizers.whitespace(d.value);
-            },
-            //datumTokenizer: Bloodhound.tokenizers.obj.whitespace('NAME', 'KEYWORD'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local: $.map(items, function(item, key) {
-
-
-                return {
-                    // value: item.value || '',
-                    //NAME: item.NAME || '',
-                    TBNAME: item.TBNAME || '',
-                    // KEYWORD: item.KEYWORD || '',
-                    value: item.value || ''
-                };
-            })
-        });
 
 
 
@@ -151,7 +112,11 @@ $(function() {
 
 
 
-        $('#wherefield').tokenfield({
+
+
+
+
+        $('#typeahead, #wherefield').tokenfield({
             typeahead: [null, {
                 name: 'config',
                 displayKey: function(item) {
@@ -189,9 +154,9 @@ $(function() {
     }
 
 
-
-
     function configureItems(items) {
+
+
 
 
         var config = new Bloodhound({
@@ -201,6 +166,8 @@ $(function() {
             //datumTokenizer: Bloodhound.tokenizers.obj.whitespace('NAME', 'KEYWORD'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             local: $.map(items, function(item, key) {
+
+
 
 
                 return {
@@ -216,10 +183,20 @@ $(function() {
 
 
 
+
+
+
+
         config.initialize();
 
 
-        $(' #actionvar').tokenfield({
+
+
+
+
+
+
+        $(' #actionvar, #byfield').tokenfield({
             typeahead: [null, {
                 name: 'config',
                 displayKey: function(item) {
@@ -254,67 +231,94 @@ $(function() {
         });
     }
 
-    function configureItems(items) {
 
-
-        var config = new Bloodhound({
-            datumTokenizer: function(d) {
-                return Bloodhound.tokenizers.whitespace(d.value);
-            },
-            //datumTokenizer: Bloodhound.tokenizers.obj.whitespace('NAME', 'KEYWORD'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local: $.map(items, function(item, key) {
-
-
-                return {
-                    // value: item.value || '',
-                    //NAME: item.NAME || '',
-                    TBNAME: item.TBNAME || '',
-                    // KEYWORD: item.KEYWORD || '',
-                    value: item.value || ''
-                };
-            })
-        });
+    /*  function configureKeywords(items) {
 
 
 
 
-        config.initialize();
-        $('#byfield').tokenfield({
-            typeahead: [null, {
-                name: 'config',
-                displayKey: function(item) {
-                    if (item) {
-                        if (item.value) {
-                            return item.value;
-                        }
-                    }
-                },
-                source: config.ttAdapter(),
-                templates: {
-                    empty: [
-                        '<div class="empty-message">',
-                        'Unable to find any match',
-                        '</div>'
-                    ].join('\n'),
-                    suggestion: function(data) {
-                        var _suggestion = '';
-                        if (data.TBNAME) {
-                            _suggestion = "<div>" +
-                                data.value +
-                                " in " +
-                                data.TBNAME + "</div>";
-                        } else {
-                            _suggestion = "<div>" +
-                                data.value + "</div>";
-                        }
-                        return _suggestion;
-                    }
-                }
-            }]
-        });
+          var config = new Bloodhound({
+              datumTokenizer: function(d) {
+                  return Bloodhound.tokenizers.whitespace(d.value);
+              },
+              //datumTokenizer: Bloodhound.tokenizers.obj.whitespace('NAME', 'KEYWORD'),
+              queryTokenizer: Bloodhound.tokenizers.whitespace,
+              local: $.map(items, function(item, key) {
 
-    }
+
+
+
+                  return {
+                      // value: item.value || '',
+                      //NAME: item.NAME || '',
+                      TBNAME: item.TBNAME || '',
+                      // KEYWORD: item.KEYWORD || '',
+                      value: item.value || ''
+                  };
+              })
+          });
+
+
+
+
+
+
+
+
+          config.initialize();
+
+
+
+
+
+
+
+
+          $('#wherefield').tokenfield({
+              typeahead: [null, {
+                  name: 'config',
+                  displayKey: function(item) {
+                      if (item) {
+                          if (item.value) {
+                              return item.value;
+                          }
+                      }
+                  },
+                  source: config.ttAdapter(),
+                  templates: {
+                      empty: [
+                          '<div class="empty-message">',
+                          'Unable to find any match',
+                          '</div>'
+                      ].join('\n'),
+                      suggestion: function(data) {
+                          var _suggestion = '';
+                          if (data.TBNAME) {
+                              _suggestion = "<div>" +
+                                  data.value +
+                                  " in " +
+                                  data.TBNAME + "</div>";
+                          } else {
+                              _suggestion = "<div>" +
+                                  data.value + "</div>";
+                          }
+                          return _suggestion;
+                      }
+                  }
+              }]
+          });
+      }*/
+
+
+
+
+
+
+
+
+
+
+
 
     function configureBkgColor(e) {
         var target = e.relatedTarget;
@@ -344,7 +348,17 @@ $(function() {
 
 
 
+
+
+
+
+
+
     $('#typeahead')
+
+
+
+
 
 
 
@@ -354,14 +368,24 @@ $(function() {
 
 
 
+
+
+
+
     .on('tokenfield:createdtoken', function(event) {
+
+
 
 
         configureBkgColor(event);
 
 
+
+
         button1_onclick();
     })
+
+
 
 
     .on('tokenfield:edittoken', function(e) {})
@@ -370,27 +394,43 @@ $(function() {
             var tokens = $('#typeahead').tokenfield('getTokens');
 
 
+
+
             var resultObj = _buildNewString(tokens);
+
+
 
 
             if (resultObj) {
                 var enteredStringArr = resultObj.string_arr;
 
 
+
+
                 var keywordPosArr = resultObj.keyword_arr;
+
+
 
 
                 var index = enteredStringArr.indexOf(tag.value);
                 if (index > -1) {
 
 
+
+
                     enteredStringArr.splice(index, 1);
+
+
 
 
                     var keywordIndex = keywordPosArr.indexOf(index);
 
 
+
+
                     if (keywordIndex > -1) {
+
+
 
 
                         getKeywordPosAndDeleteTillNextKeyword(keywordIndex);
@@ -399,8 +439,35 @@ $(function() {
             }
 
 
+
+
         })
         .on('tokenfield:removedtoken', function(event) {
+            //document.getElementById("panel6").innerHTML = " ";
+            var target = event.relatedTarget;
+            var tag = event.attrs;
+
+
+
+
+            var tokens = $('#typeahead').tokenfield('getTokens');
+
+
+
+
+            var resultObj = _buildNewString(tokens);
+
+
+
+
+            var enteredStringArr = resultObj.string_arr;
+
+
+
+
+            //var keywordPosArr = resultObj.keyword_arr;
+            // _buildNewString(enteredStringArr);
+
 
 
 
@@ -409,106 +476,12 @@ $(function() {
 
 
 
+
+
+
+
         });
 });
-
-$('#wherefield')
-
-.on('tokenfield:createdtoken', function(event) {
-    // configureBkgColor(event);
-    //button1_onclick();
-})
-
-
-.on('tokenfield:removetoken', function(event) {
-    var tag = event.attrs;
-    var tokens = $('#wherefield').tokenfield('getTokens');
-
-
-    //var resultObj = _buildNewString(tokens);
-
-
-    /* if (resultObj) {
-         var enteredStringArr = resultObj.string_arr;
-
-
-         var keywordPosArr = resultObj.keyword_arr;
-
-
-         var index = enteredStringArr.indexOf(tag.value);
-         if (index > -1) {
-
-
-             enteredStringArr.splice(index, 1);
-
-
-             var keywordIndex = keywordPosArr.indexOf(index);
-
-
-             if (keywordIndex > -1) {
-
-
-                 getKeywordPosAndDeleteTillNextKeyword(keywordIndex);
-             }
-         }
-     }*/
-
-
-})
-
-.on('tokenfield:removedtoken', function(event) {
-    // button1_onclick();
-});
-
-$('#actionvar, #byfield')
-
-.on('tokenfield:createdtoken', function(event) {
-    //configureBkgColor(event);
-    //button1_onclick();
-})
-
-
-.on('tokenfield:removetoken', function(event) {
-    var tag = event.attrs;
-    var tokens = $('#actionvar, #byfield').tokenfield('getTokens');
-
-
-    //var resultObj = _buildNewString(tokens);
-
-
-    /* if (resultObj) {
-         var enteredStringArr = resultObj.string_arr;
-
-
-         var keywordPosArr = resultObj.keyword_arr;
-
-
-         var index = enteredStringArr.indexOf(tag.value);
-         if (index > -1) {
-
-
-             enteredStringArr.splice(index, 1);
-
-
-             var keywordIndex = keywordPosArr.indexOf(index);
-
-
-             if (keywordIndex > -1) {
-
-
-                 getKeywordPosAndDeleteTillNextKeyword(keywordIndex);
-             }
-         }
-     }*/
-
-
-})
-
-.on('tokenfield:removedtoken', function(event) {
-    // button1_onclick();
-});
-
-
 
 
 
@@ -520,14 +493,22 @@ function getKeywordPosAndDeleteTillNextKeyword(keywordIndex) {
     if (tokens.length > 0) {
 
 
+
+
         var resultObj = _buildNewString(tokens);
+
+
 
 
         var enteredStringArr = resultObj.string_arr;
 
 
+
+
         var keywordPosArr = resultObj.keyword_arr;
         if (keywordPosArr.length >= 1) {
+
+
 
 
             from = keywordPosArr[keywordIndex];
@@ -541,13 +522,21 @@ function getKeywordPosAndDeleteTillNextKeyword(keywordIndex) {
             }
 
 
+
+
         }
+
+
 
 
     }
 
 
+
+
 }
+
+
 
 
 function getDOMElement(tokenAttr) {
@@ -565,7 +554,11 @@ function getDOMElement(tokenAttr) {
 }
 
 
+
+
 function removed(attrs, tokenAttr) {
+
+
 
 
     var domEl = getDOMElement(tokenAttr);
@@ -578,10 +571,18 @@ function removed(attrs, tokenAttr) {
 
 
 
+
+
+
+
     $(this).trigger(removeEvent);
 
 
+
+
     if (removeEvent.isDefaultPrevented()) return;
+
+
 
 
     var removedEvent = $.Event('tokenfield:removedtoken', options),
@@ -590,8 +591,14 @@ function removed(attrs, tokenAttr) {
         });
 
 
+
+
     domEl.remove();
 }
+
+
+
+
 
 
 
@@ -601,6 +608,8 @@ function _buildNewString(tokens) {
     var keywordArr = [];
     var resultObj = {};
     var cc = 0;
+
+
 
 
     if (tokens) {
@@ -626,6 +635,8 @@ function _buildNewString(tokens) {
 }
 
 
+
+
 function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
     var result_keywrd_Arr = [];
     var result_str = '';
@@ -646,15 +657,21 @@ function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
                 }
 
 
+
+
                 tokens[keywrdPosArr[0]].isKeyStr = true;
                 tokens[enteredVal.indexOf(enteredVal[i + 1])].isKeyStr = true;
             }
         }
 
 
+
+
         result_keywrd_Arr.push(result_str);
     } else {
         for (var k = 0; k < keywrdPosArr.length; k++) {
+
+
 
 
             result_str = '';
@@ -687,6 +704,10 @@ function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
 
 
 
+
+
+
+
 function buildActionVar(tokenObj) {
     var filteredArr = [];
     if (tokenObj) {
@@ -696,11 +717,17 @@ function buildActionVar(tokenObj) {
             } else {
 
 
+
+
             }
         }
     }
     return filteredArr;
 }
+
+
+
+
 
 
 
@@ -716,7 +743,15 @@ function image4_onclick(event) {
 
 
 
+
+
+
+
     //tokens.forEach(function(token,index){})
+
+
+
+
 
 
 
@@ -727,8 +762,11 @@ function image4_onclick(event) {
     }
 
 
+
+
 }
 //End function image4_onclick
+
 
 //Begin function typeahead_onkeypress
 function typeahead_onkeypress(event) {
@@ -737,14 +775,21 @@ function typeahead_onkeypress(event) {
     // TODO: Add your event handler code here
 
 
+
+
     alert("keypress");
+
 
 }
 //End function typeahead_onkeypress
 
 
+
+
 //Begin function button1_onclick
 function button1_onclick(event) {
+
+
 
 
     var _actionVar = '';
@@ -754,10 +799,14 @@ function button1_onclick(event) {
     var keyword = [];
 
 
+
+
     var tokens = $('#typeahead').tokenfield('getTokens');
     var resultObj = _buildNewString(tokens);
     var enteredStringArr = resultObj.string_arr;
     var keywordPosArr = resultObj.keyword_arr;
+
+
 
 
     var result_obj = buildKeywordStrings(enteredStringArr, keywordPosArr, tokens);
@@ -768,6 +817,8 @@ function button1_onclick(event) {
         for (var ml = 0; ml < actionVarBuilderArr.length; ml++) {
             _actionVar = _actionVar + ' ' + actionVarBuilderArr[ml].value;
         }
+
+
 
 
         for (var l = 0; l < keywordBuilderArr.length; l++) {
@@ -809,6 +860,8 @@ function button1_onclick(event) {
     }
 
 
+
+
     if (_actionVar == "") {
         _action = "";
     }
@@ -823,12 +876,15 @@ function button1_onclick(event) {
     var _procedure = "procedure_submit";
 
 
+
+
     var dynamicurl = "&FEXTYPE=TABLE&DATABASE=EMPLOYEE&ACTION=" + _action + "&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byStr + "&WHERESTRING=" + _whereStr;
     // var dynamicurl = "&FEXTYPE=GRAPH&DATABASE=EMPLOYEE&ACTION=SUM&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byStr + "&WHERESTRING=" + _whereStr;
     //document.getElementById('iframe2').src = _url + _ibiapp + _procedure + "&rnd=" + Math.random() + dynamicurl ;
     ajaxcall(dynamicurl);
 }
 //End function button1_onclick
+
 
 //Begin function button8_onclick
 function button8_onclick(event) {
@@ -861,6 +917,8 @@ function button8_onclick(event) {
 
 }
 //End function button8_onclick
+
+
 function _buildAVString(av_tokens) {
     var result = [];
     var resultStr = '';
@@ -905,6 +963,11 @@ function _buildWhereString(where_tokens) {
     return resultStr;
 }
 
+
+
+
+
+
 var _url = "/ibi_apps/WFServlet?IBIF_ex=";
 var _ibiapp = "dynamicfex/";
 var _procedure = "procedure_submit";
@@ -932,4 +995,8 @@ function ajaxcall(dynamicurl) {
             console.log(_data);
         }
     });
+}
+
+function onAdvSearch() {
+    $('#showHideContainer').toggle();
 }
