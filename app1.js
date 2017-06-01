@@ -39,6 +39,9 @@ $(function() {
 
 
 
+
+
+
     function renameToValue(data) {
         data.forEach(function(e) {
             if (e.NAME) {
@@ -84,7 +87,7 @@ $(function() {
 
 
 
-        $('#typeahead').tokenfield({
+        $('#typeahead, #wherefield').tokenfield({
             typeahead: [null, {
                 name: 'config',
                 displayKey: function(item) {
@@ -93,139 +96,6 @@ $(function() {
                             return item.value;
                         } else {
                             return item.KEYWORD;
-                        }
-                    }
-                },
-                source: config.ttAdapter(),
-                templates: {
-                    empty: [
-                        '<div class="empty-message">',
-                        'Unable to find any match',
-                        '</div>'
-                    ].join('\n'),
-                    suggestion: function(data) {
-                        var _suggestion = '';
-                        if (data.TBNAME) {
-                            _suggestion = "<div>" +
-                                data.value +
-                                " in " +
-                                data.TBNAME + "</div>";
-                        } else {
-                            _suggestion = "<div>" +
-                                data.value + "</div>";
-                        }
-                        return _suggestion;
-                    }
-                }
-            }]
-        });
-    }
-
-    function configureData(items) {
-
-
-        var config = new Bloodhound({
-            datumTokenizer: function(d) {
-                return Bloodhound.tokenizers.whitespace(d.value);
-            },
-            //datumTokenizer: Bloodhound.tokenizers.obj.whitespace('NAME', 'KEYWORD'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local: $.map(items, function(item, key) {
-
-
-                return {
-                    // value: item.value || '',
-                    //NAME: item.NAME || '',
-                    TBNAME: item.TBNAME || '',
-                    // KEYWORD: item.KEYWORD || '',
-                    value: item.value || ''
-                };
-            })
-        });
-
-
-
-
-        config.initialize();
-
-
-
-
-        $('#wherefield').tokenfield({
-            typeahead: [null, {
-                name: 'config',
-                displayKey: function(item) {
-                    if (item) {
-                        if (item.value) {
-                            return item.value;
-                        } else {
-                            return item.KEYWORD;
-                        }
-                    }
-                },
-                source: config.ttAdapter(),
-                templates: {
-                    empty: [
-                        '<div class="empty-message">',
-                        'Unable to find any match',
-                        '</div>'
-                    ].join('\n'),
-                    suggestion: function(data) {
-                        var _suggestion = '';
-                        if (data.TBNAME) {
-                            _suggestion = "<div>" +
-                                data.value +
-                                " in " +
-                                data.TBNAME + "</div>";
-                        } else {
-                            _suggestion = "<div>" +
-                                data.value + "</div>";
-                        }
-                        return _suggestion;
-                    }
-                }
-            }]
-        });
-    }
-
-
-
-
-    function configureItems(items) {
-
-
-        var config = new Bloodhound({
-            datumTokenizer: function(d) {
-                return Bloodhound.tokenizers.whitespace(d.value);
-            },
-            //datumTokenizer: Bloodhound.tokenizers.obj.whitespace('NAME', 'KEYWORD'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local: $.map(items, function(item, key) {
-
-
-                return {
-                    // value: item.value || '',
-                    //NAME: item.NAME || '',
-                    TBNAME: item.TBNAME || '',
-                    // KEYWORD: item.KEYWORD || '',
-                    value: item.value || ''
-                };
-            })
-        });
-
-
-
-
-        config.initialize();
-
-
-        $(' #actionvar').tokenfield({
-            typeahead: [null, {
-                name: 'config',
-                displayKey: function(item) {
-                    if (item) {
-                        if (item.value) {
-                            return item.value;
                         }
                     }
                 },
@@ -280,7 +150,11 @@ $(function() {
 
 
         config.initialize();
-        $('#byfield').tokenfield({
+
+
+
+
+        $(' #actionvar, #byfield').tokenfield({
             typeahead: [null, {
                 name: 'config',
                 displayKey: function(item) {
@@ -313,8 +187,77 @@ $(function() {
                 }
             }]
         });
-
     }
+
+    /*  function configureKeywords(items) {
+ 
+ 
+          var config = new Bloodhound({
+              datumTokenizer: function(d) {
+                  return Bloodhound.tokenizers.whitespace(d.value);
+              },
+              //datumTokenizer: Bloodhound.tokenizers.obj.whitespace('NAME', 'KEYWORD'),
+              queryTokenizer: Bloodhound.tokenizers.whitespace,
+              local: $.map(items, function(item, key) {
+ 
+ 
+                  return {
+                      // value: item.value || '',
+                      //NAME: item.NAME || '',
+                      TBNAME: item.TBNAME || '',
+                      // KEYWORD: item.KEYWORD || '',
+                      value: item.value || ''
+                  };
+              })
+          });
+ 
+ 
+ 
+ 
+          config.initialize();
+ 
+ 
+ 
+ 
+          $('#wherefield').tokenfield({
+              typeahead: [null, {
+                  name: 'config',
+                  displayKey: function(item) {
+                      if (item) {
+                          if (item.value) {
+                              return item.value;
+                          }
+                      }
+                  },
+                  source: config.ttAdapter(),
+                  templates: {
+                      empty: [
+                          '<div class="empty-message">',
+                          'Unable to find any match',
+                          '</div>'
+                      ].join('\n'),
+                      suggestion: function(data) {
+                          var _suggestion = '';
+                          if (data.TBNAME) {
+                              _suggestion = "<div>" +
+                                  data.value +
+                                  " in " +
+                                  data.TBNAME + "</div>";
+                          } else {
+                              _suggestion = "<div>" +
+                                  data.value + "</div>";
+                          }
+                          return _suggestion;
+                      }
+                  }
+              }]
+          });
+      }*/
+
+
+
+
+
 
     function configureBkgColor(e) {
         var target = e.relatedTarget;
@@ -401,7 +344,22 @@ $(function() {
 
         })
         .on('tokenfield:removedtoken', function(event) {
+            //document.getElementById("panel6").innerHTML = " ";
+            var target = event.relatedTarget;
+            var tag = event.attrs;
 
+
+            var tokens = $('#typeahead').tokenfield('getTokens');
+
+
+            var resultObj = _buildNewString(tokens);
+
+
+            var enteredStringArr = resultObj.string_arr;
+
+
+            //var keywordPosArr = resultObj.keyword_arr;
+            // _buildNewString(enteredStringArr);
 
 
             button1_onclick();
@@ -411,106 +369,6 @@ $(function() {
 
         });
 });
-
-$('#wherefield')
-
-.on('tokenfield:createdtoken', function(event) {
-    // configureBkgColor(event);
-    //button1_onclick();
-})
-
-
-.on('tokenfield:removetoken', function(event) {
-    var tag = event.attrs;
-    var tokens = $('#wherefield').tokenfield('getTokens');
-
-
-    //var resultObj = _buildNewString(tokens);
-
-
-    /* if (resultObj) {
-         var enteredStringArr = resultObj.string_arr;
-
-
-         var keywordPosArr = resultObj.keyword_arr;
-
-
-         var index = enteredStringArr.indexOf(tag.value);
-         if (index > -1) {
-
-
-             enteredStringArr.splice(index, 1);
-
-
-             var keywordIndex = keywordPosArr.indexOf(index);
-
-
-             if (keywordIndex > -1) {
-
-
-                 getKeywordPosAndDeleteTillNextKeyword(keywordIndex);
-             }
-         }
-     }*/
-
-
-})
-
-.on('tokenfield:removedtoken', function(event) {
-    // button1_onclick();
-});
-
-$('#actionvar, #byfield')
-
-.on('tokenfield:createdtoken', function(event) {
-    //configureBkgColor(event);
-    //button1_onclick();
-})
-
-
-.on('tokenfield:removetoken', function(event) {
-    var tag = event.attrs;
-    var tokens = $('#actionvar, #byfield').tokenfield('getTokens');
-
-
-    //var resultObj = _buildNewString(tokens);
-
-
-    /* if (resultObj) {
-         var enteredStringArr = resultObj.string_arr;
-
-
-         var keywordPosArr = resultObj.keyword_arr;
-
-
-         var index = enteredStringArr.indexOf(tag.value);
-         if (index > -1) {
-
-
-             enteredStringArr.splice(index, 1);
-
-
-             var keywordIndex = keywordPosArr.indexOf(index);
-
-
-             if (keywordIndex > -1) {
-
-
-                 getKeywordPosAndDeleteTillNextKeyword(keywordIndex);
-             }
-         }
-     }*/
-
-
-})
-
-.on('tokenfield:removedtoken', function(event) {
-    // button1_onclick();
-});
-
-
-
-
 
 
 function getKeywordPosAndDeleteTillNextKeyword(keywordIndex) {
@@ -829,82 +687,6 @@ function button1_onclick(event) {
     ajaxcall(dynamicurl);
 }
 //End function button1_onclick
-
-//Begin function button8_onclick
-function button8_onclick(event) {
-    var eventObject = event ? event : window.event;
-    var ctrl = eventObject.target ? eventObject.target : eventObject.srcElement;
-    // TODO: Add your event handler code here
-
-    var _fexType = 'TABLE';
-    var _dataBase = 'EMPLOYEE';
-    var _action = 'PRINT';
-    var _actionVar = '';
-    var _byField = '';
-    var _whereField = '';
-
-
-    var actTokens = $('#actionvar').tokenfield('getTokens');
-    var byTokens = $('#byField').tokenfield('getTokens');
-    var whereTokens = $('#whereField').tokenfield('getTokens');
-
-
-    _actionVar = _buildAVString(actTokens);
-    _byField = _buildByString(byTokens);
-    _whereField = _buildWhereString(whereTokens);
-
-
-    var dynamicurl = "&FEXTYPE=TABLE&DATABASE=EMPLOYEE&ACTION=" + _action + "&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byField + "&WHERESTRING=" + _whereField;
-
-
-    alert(dynamicurl);
-
-}
-//End function button8_onclick
-function _buildAVString(av_tokens) {
-    var result = [];
-    var resultStr = '';
-    if (av_tokens) {
-        if (av_tokens.length > 0) {
-            for (var av = 0; av < av_tokens.length; av++) {
-                result.push(av_tokens[av]);
-                resultStr += ' ' + av_tokens[av].value;
-            }
-        }
-    }
-    return resultStr;
-}
-
-function _buildByString(by_tokens) {
-    var result = [];
-    var resultStr = 'BY';
-    if (by_tokens) {
-        if (by_tokens.length > 0) {
-            for (var b = 0; b < by_tokens.length; b++) {
-                result.push(by_tokens[b]);
-                resultStr += ' ' + by_tokens[b].value;
-            }
-        }
-    }
-    return resultStr;
-}
-
-function _buildWhereString(where_tokens) {
-    var result = [];
-    var resultStr = '';
-    var _where = 'WHERE';
-    if (where_tokens) {
-        if (where_tokens.length > 0) {
-            for (var w = 0; w < where_tokens.length; w++) {
-                result.push(where_tokens[w]);
-                resultStr += ' ' + where_tokens[w].value;
-            }
-        }
-    }
-    resultStr = _where + resultStr;
-    return resultStr;
-}
-
 var _url = "/ibi_apps/WFServlet?IBIF_ex=";
 var _ibiapp = "dynamicfex/";
 var _procedure = "procedure_submit";
