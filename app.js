@@ -2,8 +2,7 @@ var k = 0,
     i = 0,
     j = 0;
 var key;
-
-
+var reportAction;
 
 
 $(function() {
@@ -27,10 +26,6 @@ $(function() {
 
 
 
-
-
-
-
     ).then(function() {
         var result = {};
         var _items = {};
@@ -40,15 +35,17 @@ $(function() {
         configureData(newData);
 
 
+
+
+
+
+
+
         _items = renameToValue(items);
         configureItems(_items);
         _keywords = renameToValue(keywords);
         //  configureKeywords(_keywords);
     });
-
-
-
-
 
 
 
@@ -103,20 +100,47 @@ $(function() {
 
 
 
-
-
-
-
         config.initialize();
 
 
 
 
-
-
-
-
-        $('#typeahead, #wherefield').tokenfield({
+        $('#typeahead').tokenfield({
+            typeahead: [null, {
+                name: 'config',
+                displayKey: function(item) {
+                    if (item) {
+                        if (item.value) {
+                            return item.value;
+                        } else {
+                            return item.KEYWORD;
+                        }
+                    }
+                },
+                source: config.ttAdapter(),
+                templates: {
+                    empty: [
+                        '<div class="empty-message">',
+                        'Unable to find any match',
+                        '</div>'
+                    ].join('\n'),
+                    suggestion: function(data) {
+                        var _suggestion = '';
+                        if (data.TBNAME) {
+                            _suggestion = "<div>" +
+                                data.value +
+                                " in " +
+                                data.TBNAME + "</div>";
+                        } else {
+                            _suggestion = "<div>" +
+                                data.value + "</div>";
+                        }
+                        return _suggestion;
+                    }
+                }
+            }]
+        });
+        $('#wherefield').tokenfield({
             typeahead: [null, {
                 name: 'config',
                 displayKey: function(item) {
@@ -154,6 +178,12 @@ $(function() {
     }
 
 
+
+
+
+
+
+
     function configureItems(items) {
 
 
@@ -183,20 +213,45 @@ $(function() {
 
 
 
-
-
-
-
         config.initialize();
 
 
 
 
-
-
-
-
-        $(' #actionvar, #byfield').tokenfield({
+        $('#actionvar').tokenfield({
+            typeahead: [null, {
+                name: 'config',
+                displayKey: function(item) {
+                    if (item) {
+                        if (item.value) {
+                            return item.value;
+                        }
+                    }
+                },
+                source: config.ttAdapter(),
+                templates: {
+                    empty: [
+                        '<div class="empty-message">',
+                        'Unable to find any match',
+                        '</div>'
+                    ].join('\n'),
+                    suggestion: function(data) {
+                        var _suggestion = '';
+                        if (data.TBNAME) {
+                            _suggestion = "<div>" +
+                                data.value +
+                                " in " +
+                                data.TBNAME + "</div>";
+                        } else {
+                            _suggestion = "<div>" +
+                                data.value + "</div>";
+                        }
+                        return _suggestion;
+                    }
+                }
+            }]
+        });
+        $('#byfield').tokenfield({
             typeahead: [null, {
                 name: 'config',
                 displayKey: function(item) {
@@ -232,6 +287,12 @@ $(function() {
     }
 
 
+
+
+
+
+
+
     /*  function configureKeywords(items) {
 
 
@@ -244,6 +305,18 @@ $(function() {
               //datumTokenizer: Bloodhound.tokenizers.obj.whitespace('NAME', 'KEYWORD'),
               queryTokenizer: Bloodhound.tokenizers.whitespace,
               local: $.map(items, function(item, key) {
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -261,15 +334,7 @@ $(function() {
 
 
 
-
-
-
-
           config.initialize();
-
-
-
-
 
 
 
@@ -316,10 +381,6 @@ $(function() {
 
 
 
-
-
-
-
     function configureBkgColor(e) {
         var target = e.relatedTarget;
         var item = e.attrs;
@@ -346,28 +407,12 @@ $(function() {
 
 
 
-
-
-
-
-
-
-
-
     $('#typeahead')
 
 
 
 
-
-
-
-
     .on('tokenfield:createtoken', function(e) {})
-
-
-
-
 
 
 
@@ -384,6 +429,10 @@ $(function() {
 
         button1_onclick();
     })
+
+
+
+
 
 
 
@@ -414,10 +463,6 @@ $(function() {
 
                 var index = enteredStringArr.indexOf(tag.value);
                 if (index > -1) {
-
-
-
-
                     enteredStringArr.splice(index, 1);
 
 
@@ -439,8 +484,6 @@ $(function() {
             }
 
 
-
-
         })
         .on('tokenfield:removedtoken', function(event) {
             //document.getElementById("panel6").innerHTML = " ";
@@ -448,40 +491,63 @@ $(function() {
             var tag = event.attrs;
 
 
-
-
             var tokens = $('#typeahead').tokenfield('getTokens');
-
-
 
 
             var resultObj = _buildNewString(tokens);
 
 
-
-
             var enteredStringArr = resultObj.string_arr;
-
-
 
 
             //var keywordPosArr = resultObj.keyword_arr;
             // _buildNewString(enteredStringArr);
 
 
-
-
             button1_onclick();
 
 
-
-
-
-
-
-
         });
+
+
+    $('#actionvar')
+
+
+    .on('tokenfield:createdtoken', function(event) {
+
+        configureBkgColor(event);
+
+        // button1_onclick();
+    });
+
+
+    $('#byfield')
+
+    .on('tokenfield:createdtoken', function(event) {
+
+        configureBkgColor(event);
+
+        // button1_onclick();
+    });
+
+
+    $('#wherefield')
+
+    .on('tokenfield:createdtoken', function(event) {
+
+        configureBkgColor(event);
+
+        // button1_onclick();
+    });
+
+
+
+
 });
+
+
+
+
 
 
 
@@ -539,6 +605,14 @@ function getKeywordPosAndDeleteTillNextKeyword(keywordIndex) {
 
 
 
+
+
+
+
+
+
+
+
 function getDOMElement(tokenAttr) {
     var $token;
     var result;
@@ -556,6 +630,14 @@ function getDOMElement(tokenAttr) {
 
 
 
+
+
+
+
+
+
+
+
 function removed(attrs, tokenAttr) {
 
 
@@ -567,10 +649,6 @@ function removed(attrs, tokenAttr) {
             relatedTarget: domEl.get(0)
         },
         removeEvent = $.Event('tokenfield:removetoken', options)
-
-
-
-
 
 
 
@@ -603,11 +681,17 @@ function removed(attrs, tokenAttr) {
 
 
 
+
+
+
+
 function _buildNewString(tokens) {
     var actionVarArr = [];
     var keywordArr = [];
     var resultObj = {};
     var cc = 0;
+
+
 
 
 
@@ -637,6 +721,14 @@ function _buildNewString(tokens) {
 
 
 
+
+
+
+
+
+
+
+
 function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
     var result_keywrd_Arr = [];
     var result_str = '';
@@ -655,6 +747,8 @@ function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
                 } else {
                     result_str += ' ' + tokens[keywrdPosArr[0]].value + ' ' + enteredVal[i + 1];
                 }
+
+
 
 
 
@@ -730,8 +824,6 @@ function buildActionVar(tokenObj) {
 
 
 
-
-
 //Begin function image4_onclick
 function image4_onclick(event) {
     var eventObject = event ? event : window.event;
@@ -741,17 +833,7 @@ function image4_onclick(event) {
     var tokens = $('#typeahead').tokenfield('getTokens');
 
 
-
-
-
-
-
-
     //tokens.forEach(function(token,index){})
-
-
-
-
 
 
 
@@ -760,28 +842,53 @@ function image4_onclick(event) {
         //tokens.splice(index,1);
         removed(tokens[index], tokens[index].value)
     }
-
-
-
-
+    IbComposer_triggerExecution("Hideiframe", 1);
 }
 //End function image4_onclick
 
 
-//Begin function typeahead_onkeypress
-function typeahead_onkeypress(event) {
+
+
+//Begin function image1_onclick
+function image1_onclick(event) {
     var eventObject = event ? event : window.event;
     var ctrl = eventObject.target ? eventObject.target : eventObject.srcElement;
     // TODO: Add your event handler code here
+    var tokensVerbs = $('#actionvar').tokenfield('getTokens');
+    var tokensBy = $('#byfield').tokenfield('getTokens');
+    var tokensWhere = $('#wherefield').tokenfield('getTokens');
+    removeVerbs(tokensVerbs);
+    removeBy(tokensBy);
+    removeWhere(tokensWhere);
+
+    IbComposer_triggerExecution("Hideiframe", 1);
 
 
-
-
-    alert("keypress");
 
 
 }
-//End function typeahead_onkeypress
+//End function image1_onclick
+function removeVerbs(tokensVerbs) {
+    for (var index = 0; index < tokensVerbs.length; index++) {
+        removed(tokensVerbs[index], tokensVerbs[index].value);
+    }
+}
+
+
+function removeBy(tokensBy) {
+    for (var index = 0; index < tokensBy.length; index++) {
+        removed(tokensBy[index], tokensBy[index].value);
+    }
+}
+
+
+function removeWhere(tokensWhere) {
+    for (var index = 0; index < tokensWhere.length; index++) {
+        removed(tokensWhere[index], tokensWhere[index].value);
+    }
+}
+
+
 
 
 
@@ -792,11 +899,19 @@ function button1_onclick(event) {
 
 
 
+
+
+
+
     var _actionVar = '';
     var _byStr = '';
     var _action = 'PRINT';
     var _whereStr = '';
     var keyword = [];
+
+
+
+
 
 
 
@@ -862,9 +977,23 @@ function button1_onclick(event) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     if (_actionVar == "") {
         _action = "";
     }
+
+
 
 
 
@@ -878,6 +1007,10 @@ function button1_onclick(event) {
 
 
 
+
+
+
+
     var dynamicurl = "&FEXTYPE=TABLE&DATABASE=EMPLOYEE&ACTION=" + _action + "&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byStr + "&WHERESTRING=" + _whereStr;
     // var dynamicurl = "&FEXTYPE=GRAPH&DATABASE=EMPLOYEE&ACTION=SUM&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byStr + "&WHERESTRING=" + _whereStr;
     //document.getElementById('iframe2').src = _url + _ibiapp + _procedure + "&rnd=" + Math.random() + dynamicurl ;
@@ -886,82 +1019,192 @@ function button1_onclick(event) {
 //End function button1_onclick
 
 
+//Begin function action_onchange
+function action_onchange(event) {
+    var eventObject = event ? event : window.event;
+    var ctrl = eventObject.target ? eventObject.target : eventObject.srcElement;
+    // TODO: Add your event handler code here
+    //var defaultAction = 'Detail';
+    //reportAction =  defaultAction ;
+    if (event) {
+        reportAction = event.currentTarget.defaultValue;
+    }
+
+
+    console.log(event.currentTarget.defaultValue);
+    // return reportAction;
+}
+//End function action_onchange
+
+
+
+
+
+
+
+
+
+
+
+
 //Begin function button8_onclick
 function button8_onclick(event) {
     var eventObject = event ? event : window.event;
     var ctrl = eventObject.target ? eventObject.target : eventObject.srcElement;
     // TODO: Add your event handler code here
 
+
+
+
     var _fexType = 'TABLE';
     var _dataBase = 'EMPLOYEE';
-    var _action = 'PRINT';
+    var _action = '';
     var _actionVar = '';
     var _byField = '';
     var _whereField = '';
 
 
+    //get the selected value in detail/summary
+    //var actionEl = $('#action');
+    //var summaryEl = $('#summary');
+    var getActionVar = reportAction;
+    if (getActionVar === 'Detail') {
+        _action = 'PRINT';
+    } else if (getActionVar === 'Summary') {
+        _action = 'SUM';
+
+    } else {
+        _action = 'PRINT'
+    }
+
+
+
+
+
+
+
+
     var actTokens = $('#actionvar').tokenfield('getTokens');
-    var byTokens = $('#byField').tokenfield('getTokens');
-    var whereTokens = $('#whereField').tokenfield('getTokens');
+    var byTokens = $('#byfield').tokenfield('getTokens');
+    var whereTokens = $('#wherefield').tokenfield('getTokens');
 
 
-    _actionVar = _buildAVString(actTokens);
+
+
+
+
+
+
+    _actionVar = _buildAVString(actTokens, _action);
     _byField = _buildByString(byTokens);
     _whereField = _buildWhereString(whereTokens);
+
+
+    if (_actionVar == "") {
+        _action = "";
+    }
+
+
 
 
     var dynamicurl = "&FEXTYPE=TABLE&DATABASE=EMPLOYEE&ACTION=" + _action + "&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byField + "&WHERESTRING=" + _whereField;
 
 
-    alert(dynamicurl);
+
+
+
+
+
+
+    //alert(dynamicurl);
+    ajaxcall(dynamicurl);
+
 
 }
 //End function button8_onclick
-
-
-function _buildAVString(av_tokens) {
+function _buildAVString(av_tokens, action) {
     var result = [];
     var resultStr = '';
     if (av_tokens) {
         if (av_tokens.length > 0) {
             for (var av = 0; av < av_tokens.length; av++) {
                 result.push(av_tokens[av]);
-                resultStr += ' ' + av_tokens[av].value;
+                if (action === 'SUM') {
+                    resultStr += ' ' + 'CNT.' + av_tokens[av].value;
+                } else {
+
+
+                    resultStr += av_tokens[av].value + ' ';
+                }
             }
         }
     }
+
     return resultStr;
 }
 
+
+
+
 function _buildByString(by_tokens) {
     var result = [];
-    var resultStr = 'BY';
+    var resultStr = '';
     if (by_tokens) {
         if (by_tokens.length > 0) {
             for (var b = 0; b < by_tokens.length; b++) {
                 result.push(by_tokens[b]);
-                resultStr += ' ' + by_tokens[b].value;
+                resultStr += ' ' + 'BY' + ' ' + by_tokens[b].value;
+
+
             }
         }
     }
     return resultStr;
 }
 
+
+
+
 function _buildWhereString(where_tokens) {
     var result = [];
     var resultStr = '';
-    var _where = 'WHERE';
+    var _where = ' WHERE';
     if (where_tokens) {
         if (where_tokens.length > 0) {
             for (var w = 0; w < where_tokens.length; w++) {
-                result.push(where_tokens[w]);
-                resultStr += ' ' + where_tokens[w].value;
+                result.push(where_tokens[w].value);
+                if (where_tokens[w].value === 'IS EQUAL') {
+                    resultStr += ' EQ ' + "'" + where_tokens[w + 1].value + "'";
+                } else if (where_tokens[w].value === 'IS GREATER THAN') {
+                    resultStr += ' GT ' + "'" + where_tokens[w + 1].value + "'";
+                } else if (where_tokens[w].value === 'IS GREATER THAN OR EQUAL TO') {
+                    resultStr += ' GE ' + "'" + where_tokens[w + 1].value + "'";
+                } else if (where_tokens[w].value === 'IS LESS THAN') {
+                    resultStr += ' LT ' + "'" + where_tokens[w + 1].value + "'";
+                } else if (where_tokens[w].value === 'IS LESS THAN OR EQUAL TO') {
+                    resultStr += ' LE ' + "'" + where_tokens[w + 1].value + "'";
+                } else if (where_tokens[w].value === 'IS NOT EQUAL TO') {
+                    resultStr += ' NE ' + "'" + where_tokens[w + 1].value + "'";
+                } else if (where_tokens[w].value && (where_tokens[w].TBNAME === 'employee' || where_tokens[w].TBNAME === '') && (where_tokens[w].TBNAME !== undefined)) {
+                    resultStr += ' ' + where_tokens[w].value;
+                }
+                /*else {
+                    if ((where_tokens.indexOf(where_tokens[w]) === (where_tokens[w].indexOf("WHERE") + 3))) {
+                        resultStr += where_tokens[w];
+                    }
+                }*/
+
+
             }
+            resultStr = _where + resultStr;
         }
     }
-    resultStr = _where + resultStr;
+
+
     return resultStr;
 }
+
+
 
 
 
@@ -975,8 +1218,16 @@ var _procedure = "procedure_submit";
 
 
 
+
+
+
+
+
+
+
+
 function ajaxcall(dynamicurl) {
-    //  alert(dynamicurl);
+    alert(dynamicurl);
     $.ajax({
         type: "GET",
         url: _url + _ibiapp + _procedure + "&rnd=" + Math.random() + dynamicurl,
@@ -987,16 +1238,18 @@ function ajaxcall(dynamicurl) {
             var isError = _data.indexOf('Your request did not return any output to display');
             if (isError > -1) {
                 $('#iframe2').contents().find('body').append('Sorry! Results not found');
+                IbComposer_triggerExecution("Hideiframe", 1);
             } else {
+
+
+
+
                 $('#iframe2').contents().find('body').append(_data);
+                IbComposer_triggerExecution("showiframe", 1);
             }
         },
         error: function(_data) {
             console.log(_data);
         }
     });
-}
-
-function onAdvSearch() {
-    $('#showHideContainer').toggle();
 }
