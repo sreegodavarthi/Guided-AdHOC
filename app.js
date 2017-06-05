@@ -3,6 +3,8 @@ var k = 0,
     j = 0;
 var key;
 var reportAction;
+var tempurl;
+var resultArr = [];
 
 
 $(function() {
@@ -26,6 +28,10 @@ $(function() {
 
 
 
+
+
+
+
     ).then(function() {
         var result = {};
         var _items = {};
@@ -33,12 +39,6 @@ $(function() {
         result = items.concat(keywords);
         var newData = renameToValue(result);
         configureData(newData);
-
-
-
-
-
-
 
 
         _items = renameToValue(items);
@@ -50,10 +50,7 @@ $(function() {
 
 
 
-
-
-
-
+    //rename NAME and KEYWORD properties to VALUE
     function renameToValue(data) {
         data.forEach(function(e) {
             if (e.NAME) {
@@ -69,13 +66,8 @@ $(function() {
     }
 
 
-
-
+    //setup typeahead functionality
     function configureData(items) {
-
-
-
-
         var config = new Bloodhound({
             datumTokenizer: function(d) {
                 return Bloodhound.tokenizers.whitespace(d.value);
@@ -98,11 +90,7 @@ $(function() {
         });
 
 
-
-
         config.initialize();
-
-
 
 
         $('#typeahead').tokenfield({
@@ -140,6 +128,8 @@ $(function() {
                 }
             }]
         });
+
+
         $('#wherefield').tokenfield({
             typeahead: [null, {
                 name: 'config',
@@ -180,13 +170,8 @@ $(function() {
 
 
 
-
-
-
-
+    //setup typeahead functionality
     function configureItems(items) {
-
-
 
 
         var config = new Bloodhound({
@@ -213,7 +198,15 @@ $(function() {
 
 
 
+
+
+
+
         config.initialize();
+
+
+
+
 
 
 
@@ -287,100 +280,7 @@ $(function() {
     }
 
 
-
-
-
-
-
-
-    /*  function configureKeywords(items) {
-
-
-
-
-          var config = new Bloodhound({
-              datumTokenizer: function(d) {
-                  return Bloodhound.tokenizers.whitespace(d.value);
-              },
-              //datumTokenizer: Bloodhound.tokenizers.obj.whitespace('NAME', 'KEYWORD'),
-              queryTokenizer: Bloodhound.tokenizers.whitespace,
-              local: $.map(items, function(item, key) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                  return {
-                      // value: item.value || '',
-                      //NAME: item.NAME || '',
-                      TBNAME: item.TBNAME || '',
-                      // KEYWORD: item.KEYWORD || '',
-                      value: item.value || ''
-                  };
-              })
-          });
-
-
-
-
-          config.initialize();
-
-
-
-
-          $('#wherefield').tokenfield({
-              typeahead: [null, {
-                  name: 'config',
-                  displayKey: function(item) {
-                      if (item) {
-                          if (item.value) {
-                              return item.value;
-                          }
-                      }
-                  },
-                  source: config.ttAdapter(),
-                  templates: {
-                      empty: [
-                          '<div class="empty-message">',
-                          'Unable to find any match',
-                          '</div>'
-                      ].join('\n'),
-                      suggestion: function(data) {
-                          var _suggestion = '';
-                          if (data.TBNAME) {
-                              _suggestion = "<div>" +
-                                  data.value +
-                                  " in " +
-                                  data.TBNAME + "</div>";
-                          } else {
-                              _suggestion = "<div>" +
-                                  data.value + "</div>";
-                          }
-                          return _suggestion;
-                      }
-                  }
-              }]
-          });
-      }*/
-
-
-
-
-
-
-
-
+    //to change the background-color of chips
     function configureBkgColor(e) {
         var target = e.relatedTarget;
         var item = e.attrs;
@@ -408,36 +308,14 @@ $(function() {
 
 
     $('#typeahead')
+        .on('tokenfield:createtoken', function(e) {})
+        .on('tokenfield:createdtoken', function(event) {
+            configureBkgColor(event);
+            button1_onclick();
 
 
-
-
-    .on('tokenfield:createtoken', function(e) {})
-
-
-
-
-    .on('tokenfield:createdtoken', function(event) {
-
-
-
-
-        configureBkgColor(event);
-
-
-
-
-        button1_onclick();
-    })
-
-
-
-
-
-
-
-
-    .on('tokenfield:edittoken', function(e) {})
+        })
+        .on('tokenfield:edittoken', function(e) {})
         .on('tokenfield:removetoken', function(event) {
             var tag = event.attrs;
             var tokens = $('#typeahead').tokenfield('getTokens');
@@ -454,8 +332,6 @@ $(function() {
                 var enteredStringArr = resultObj.string_arr;
 
 
-
-
                 var keywordPosArr = resultObj.keyword_arr;
 
 
@@ -466,16 +342,10 @@ $(function() {
                     enteredStringArr.splice(index, 1);
 
 
-
-
                     var keywordIndex = keywordPosArr.indexOf(index);
 
 
-
-
                     if (keywordIndex > -1) {
-
-
 
 
                         getKeywordPosAndDeleteTillNextKeyword(keywordIndex);
@@ -484,74 +354,45 @@ $(function() {
             }
 
 
+
+
         })
         .on('tokenfield:removedtoken', function(event) {
             //document.getElementById("panel6").innerHTML = " ";
-            var target = event.relatedTarget;
-            var tag = event.attrs;
-
-
             var tokens = $('#typeahead').tokenfield('getTokens');
-
-
             var resultObj = _buildNewString(tokens);
-
-
-            var enteredStringArr = resultObj.string_arr;
-
-
-            //var keywordPosArr = resultObj.keyword_arr;
-            // _buildNewString(enteredStringArr);
-
-
             button1_onclick();
-
-
         });
 
 
+
+
     $('#actionvar')
+        .on('tokenfield:createdtoken', function(event) {
+            configureBkgColor(event);
+        });
 
 
-    .on('tokenfield:createdtoken', function(event) {
-
-        configureBkgColor(event);
-
-        // button1_onclick();
-    });
 
 
     $('#byfield')
+        .on('tokenfield:createdtoken', function(event) {
+            configureBkgColor(event);
+        });
 
-    .on('tokenfield:createdtoken', function(event) {
 
-        configureBkgColor(event);
-
-        // button1_onclick();
-    });
 
 
     $('#wherefield')
-
-    .on('tokenfield:createdtoken', function(event) {
-
-        configureBkgColor(event);
-
-        // button1_onclick();
-    });
-
-
-
-
+        .on('tokenfield:createdtoken', function(event) {
+            configureBkgColor(event);
+        });
 });
 
 
 
 
-
-
-
-
+//to delete the keyword and associated string
 function getKeywordPosAndDeleteTillNextKeyword(keywordIndex) {
     var tokens = $('#typeahead').tokenfield('getTokens');
     var from = 0;
@@ -603,16 +444,7 @@ function getKeywordPosAndDeleteTillNextKeyword(keywordIndex) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
+//get the object based on its value
 function getDOMElement(tokenAttr) {
     var $token;
     var result;
@@ -628,16 +460,7 @@ function getDOMElement(tokenAttr) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
+//to remove the chip from UI
 function removed(attrs, tokenAttr) {
 
 
@@ -649,6 +472,10 @@ function removed(attrs, tokenAttr) {
             relatedTarget: domEl.get(0)
         },
         removeEvent = $.Event('tokenfield:removetoken', options)
+
+
+
+
 
 
 
@@ -679,19 +506,12 @@ function removed(attrs, tokenAttr) {
 
 
 
-
-
-
-
-
-
+//to build query string when the user enters a value
 function _buildNewString(tokens) {
     var actionVarArr = [];
     var keywordArr = [];
     var resultObj = {};
     var cc = 0;
-
-
 
 
 
@@ -719,16 +539,7 @@ function _buildNewString(tokens) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
+//to build keyword string
 function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
     var result_keywrd_Arr = [];
     var result_str = '';
@@ -751,14 +562,10 @@ function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
 
 
 
-
-
                 tokens[keywrdPosArr[0]].isKeyStr = true;
                 tokens[enteredVal.indexOf(enteredVal[i + 1])].isKeyStr = true;
             }
         }
-
-
 
 
         result_keywrd_Arr.push(result_str);
@@ -800,8 +607,7 @@ function buildKeywordStrings(enteredVal, keywrdPosArr, tokens) {
 
 
 
-
-
+//to build action variable
 function buildActionVar(tokenObj) {
     var filteredArr = [];
     if (tokenObj) {
@@ -824,6 +630,8 @@ function buildActionVar(tokenObj) {
 
 
 
+
+
 //Begin function image4_onclick
 function image4_onclick(event) {
     var eventObject = event ? event : window.event;
@@ -833,18 +641,20 @@ function image4_onclick(event) {
     var tokens = $('#typeahead').tokenfield('getTokens');
 
 
-    //tokens.forEach(function(token,index){})
-
-
 
 
     for (var index = 0; index < tokens.length; index++) {
         //tokens.splice(index,1);
         removed(tokens[index], tokens[index].value)
     }
+    IbComposer_triggerExecution("hideerror", 1);
     IbComposer_triggerExecution("Hideiframe", 1);
 }
 //End function image4_onclick
+
+
+
+
 
 
 
@@ -861,6 +671,8 @@ function image1_onclick(event) {
     removeBy(tokensBy);
     removeWhere(tokensWhere);
 
+
+    IbComposer_triggerExecution("hideerror", 1);
     IbComposer_triggerExecution("Hideiframe", 1);
 
 
@@ -875,11 +687,15 @@ function removeVerbs(tokensVerbs) {
 }
 
 
+
+
 function removeBy(tokensBy) {
     for (var index = 0; index < tokensBy.length; index++) {
         removed(tokensBy[index], tokensBy[index].value);
     }
 }
+
+
 
 
 function removeWhere(tokensWhere) {
@@ -893,12 +709,10 @@ function removeWhere(tokensWhere) {
 
 
 
+
+
 //Begin function button1_onclick
 function button1_onclick(event) {
-
-
-
-
 
 
 
@@ -912,16 +726,15 @@ function button1_onclick(event) {
 
 
 
-
-
-
-
     var tokens = $('#typeahead').tokenfield('getTokens');
     var resultObj = _buildNewString(tokens);
     var enteredStringArr = resultObj.string_arr;
     var keywordPosArr = resultObj.keyword_arr;
 
 
+    var actionvarTokensList = $('#actionvar').tokenfield('getTokensList');
+    var byTokensList = $('#byfield').tokenfield('getTokensList');
+    var whereTokensList = $('#wherefield').tokenfield('getTokensList');
 
 
     var result_obj = buildKeywordStrings(enteredStringArr, keywordPosArr, tokens);
@@ -931,6 +744,19 @@ function button1_onclick(event) {
         var actionVarBuilderArr = buildActionVar(modifiedTokens);
         for (var ml = 0; ml < actionVarBuilderArr.length; ml++) {
             _actionVar = _actionVar + ' ' + actionVarBuilderArr[ml].value;
+            /*if (actionvarTokensList && actionvarTokensList.length > 0) {
+                for (var k = 0; k < actionvarTokensList.length; k++) {
+                    if (actionvarTokensList.indexOf(actionVarBuilderArr[ml].value) > -1) {
+                        //item already present in the array
+                    } else {
+                        $('#actionvar').tokenfield('createToken', actionVarBuilderArr[ml]);
+                    }
+                }
+            }else{
+                 $('#actionvar').tokenfield('createToken', actionVarBuilderArr[ml]);
+            }*/
+
+
         }
 
 
@@ -977,25 +803,9 @@ function button1_onclick(event) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    if (_actionVar == "") {
+    if (_actionVar === "") {
         _action = "";
     }
-
-
-
-
 
 
 
@@ -1005,18 +815,14 @@ function button1_onclick(event) {
     var _procedure = "procedure_submit";
 
 
-
-
-
-
-
-
     var dynamicurl = "&FEXTYPE=TABLE&DATABASE=EMPLOYEE&ACTION=" + _action + "&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byStr + "&WHERESTRING=" + _whereStr;
     // var dynamicurl = "&FEXTYPE=GRAPH&DATABASE=EMPLOYEE&ACTION=SUM&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byStr + "&WHERESTRING=" + _whereStr;
     //document.getElementById('iframe2').src = _url + _ibiapp + _procedure + "&rnd=" + Math.random() + dynamicurl ;
     ajaxcall(dynamicurl);
 }
 //End function button1_onclick
+
+
 
 
 //Begin function action_onchange
@@ -1029,20 +835,10 @@ function action_onchange(event) {
     if (event) {
         reportAction = event.currentTarget.defaultValue;
     }
-
-
-    console.log(event.currentTarget.defaultValue);
+    // console.log(event.currentTarget.defaultValue);
     // return reportAction;
 }
 //End function action_onchange
-
-
-
-
-
-
-
-
 
 
 
@@ -1054,8 +850,6 @@ function button8_onclick(event) {
     // TODO: Add your event handler code here
 
 
-
-
     var _fexType = 'TABLE';
     var _dataBase = 'EMPLOYEE';
     var _action = '';
@@ -1065,23 +859,16 @@ function button8_onclick(event) {
 
 
     //get the selected value in detail/summary
-    //var actionEl = $('#action');
-    //var summaryEl = $('#summary');
     var getActionVar = reportAction;
     if (getActionVar === 'Detail') {
         _action = 'PRINT';
     } else if (getActionVar === 'Summary') {
         _action = 'SUM';
 
+
     } else {
-        _action = 'PRINT'
+        _action = 'PRINT';
     }
-
-
-
-
-
-
 
 
     var actTokens = $('#actionvar').tokenfield('getTokens');
@@ -1091,33 +878,23 @@ function button8_onclick(event) {
 
 
 
-
-
-
-
     _actionVar = _buildAVString(actTokens, _action);
     _byField = _buildByString(byTokens);
     _whereField = _buildWhereString(whereTokens);
 
 
-    if (_actionVar == "") {
+    if (_actionVar === "") {
         _action = "";
     }
-
-
 
 
     var dynamicurl = "&FEXTYPE=TABLE&DATABASE=EMPLOYEE&ACTION=" + _action + "&ACTIONVARIABLE=" + _actionVar + "&BYSTRING=" + _byField + "&WHERESTRING=" + _whereField;
 
 
-
-
-
-
-
-
     //alert(dynamicurl);
     ajaxcall(dynamicurl);
+
+
 
 
 }
@@ -1134,16 +911,17 @@ function _buildAVString(av_tokens, action) {
                 } else {
 
 
+
+
                     resultStr += av_tokens[av].value + ' ';
                 }
             }
         }
     }
 
+
     return resultStr;
 }
-
-
 
 
 function _buildByString(by_tokens) {
@@ -1154,15 +932,11 @@ function _buildByString(by_tokens) {
             for (var b = 0; b < by_tokens.length; b++) {
                 result.push(by_tokens[b]);
                 resultStr += ' ' + 'BY' + ' ' + by_tokens[b].value;
-
-
             }
         }
     }
     return resultStr;
 }
-
-
 
 
 function _buildWhereString(where_tokens) {
@@ -1195,20 +969,18 @@ function _buildWhereString(where_tokens) {
                 }*/
 
 
+
+
             }
             resultStr = _where + resultStr;
         }
     }
 
 
+
+
     return resultStr;
 }
-
-
-
-
-
-
 
 
 var _url = "/ibi_apps/WFServlet?IBIF_ex=";
@@ -1220,14 +992,9 @@ var _procedure = "procedure_submit";
 
 
 
-
-
-
-
-
-
 function ajaxcall(dynamicurl) {
-    alert(dynamicurl);
+    //alert(dynamicurl);
+    tempurl = _url + _ibiapp + _procedure + "&rnd=" + Math.random() + dynamicurl;
     $.ajax({
         type: "GET",
         url: _url + _ibiapp + _procedure + "&rnd=" + Math.random() + dynamicurl,
@@ -1239,13 +1006,11 @@ function ajaxcall(dynamicurl) {
             if (isError > -1) {
                 $('#iframe2').contents().find('body').append('Sorry! Results not found');
                 IbComposer_triggerExecution("Hideiframe", 1);
+                IbComposer_triggerExecution("showerror", 1);
             } else {
-
-
-
-
                 $('#iframe2').contents().find('body').append(_data);
                 IbComposer_triggerExecution("showiframe", 1);
+                IbComposer_triggerExecution("hideerror", 1);
             }
         },
         error: function(_data) {
@@ -1253,3 +1018,85 @@ function ajaxcall(dynamicurl) {
         }
     });
 }
+
+
+
+
+//Begin function saveimage_onclick
+function saveimage_onclick(event) {
+    var eventObject = event ? event : window.event;
+    var ctrl = eventObject.target ? eventObject.target : eventObject.srcElement;
+    // TODO: Add your event handler code here
+
+
+
+
+
+
+
+
+}
+//End function saveimage_onclick
+
+
+
+
+
+
+
+
+
+
+
+
+//Begin function submitsavepopup_onclick
+function submitsavepopup_onclick(event) {
+    var eventObject = event ? event : window.event;
+    var ctrl = eventObject.target ? eventObject.target : eventObject.srcElement;
+    // TODO: Add your event handler code here
+    var nameVal = $('#inputsavepopup').val();
+    var resultObj = {
+        name: nameVal,
+        value: tempurl
+    }
+
+
+    console.log(resultObj);
+    resultArr.push(resultObj);
+    console.log(resultArr);
+}
+//End function submitsavepopup_onclick
+
+
+
+
+//Begin function image11_onclick
+function image11_onclick(event) {
+    var eventObject = event ? event : window.event;
+    var ctrl = eventObject.target ? eventObject.target : eventObject.srcElement;
+    // TODO: Add your event handler code here
+    var _result = resultArr;
+    var names = [];
+    var iframeEl = $('#scheduleiconpopuppanel');
+    if (resultArr && resultArr.length > 0) {
+        for (var arrIndex = 0; arrIndex < resultArr.length; arrIndex++) {
+            names.push(resultArr[arrIndex].name);
+        }
+    }
+
+
+    if (names && names.length > 0) {
+        //get the iframe element and append input elements
+        for (var nameIndex = 0; nameIndex < names.length; nameIndex++) {
+            // iframeEl.contents().find('body').append('<input type="text" value= "'+names[nameIndex]+'" /><br/>');
+            iframeEl.append('<input type="text" class="form-control" value= "' + names[nameIndex] + '" /><br/>');
+        }
+    }
+
+
+
+
+
+
+}
+//End function image11_onclick
