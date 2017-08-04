@@ -1,7 +1,7 @@
 
 # Description
 
-Guided Ad-Hoc application that allows the users to generate reports dynamically. Application interacts with RESTful webservices using AJAX, JSON data to generate the required reports. 
+Self-Service Guided Ad-Hoc application that allows the users to generate reports dynamically. Application interacts with RESTful webservices using AJAX, JSON data to generate the required reports. 
 
 ## Screenshots
 
